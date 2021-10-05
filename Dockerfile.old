@@ -3,17 +3,14 @@ FROM node:14
 
 WORKDIR /api/treninoo
 
-COPY . .
-
-RUN yarn install
-
-RUN yarn build
-
-WORKDIR /api/treninoo/build
-
-RUN yarn install --production
+COPY ./build .
 
 COPY .env .env
+
+# RUN npm ci --production
+# RUN npm install --no-optional
+
+RUN yarn install --production
 
 EXPOSE 3333
 
