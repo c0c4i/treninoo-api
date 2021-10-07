@@ -50,8 +50,6 @@ Route.get('/departurestation/:id', async ({ request, response }) => {
   })
 })
 
-import { MAP_PRIORITY } from '../utils/priorities'
-
 Route.get('/autocomplete/:word', async ({ request, response }) => {
   const id = request.param('word')
   const url = Env.get('BASE_URL') + `/autocompletaStazione/${id}`
