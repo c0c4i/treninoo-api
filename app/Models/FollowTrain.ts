@@ -17,6 +17,12 @@ export default class FollowTrain extends BaseModel {
   @column()
   public followType: string
 
+  @column()
+  public arrivedNotification: boolean
+
+  @column()
+  public departedNotification: boolean
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

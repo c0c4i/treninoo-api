@@ -115,3 +115,9 @@ Route.delete('/followtrain', async ({ request, response }) => {
     payload,
   })
 })
+
+Route.get('/yes', async ({ response }) => {
+  response.send({
+    okay: 'lesgo',
+  })
+})

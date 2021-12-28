@@ -10,6 +10,8 @@ export default class FollowTrains extends BaseSchema {
       table.string('departure_station')
       table.string('station_code')
       table.string('follow_type')
+      table.string('arrived_notification').defaultTo(false)
+      table.string('departed_notification').defaultTo(false)
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
       table.primary(['device_token', 'train_code', 'departure_station'])
