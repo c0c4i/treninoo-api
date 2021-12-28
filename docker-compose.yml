@@ -1,11 +1,12 @@
 version: '3'
 
 services:
-  api:
-    image: treninoo-api:latest
-    # build: ./
-    container_name: treninoo-api
-    ports:
-      - '3333:3333'
-    env_file:
-      - ./.env
+    postgres-db:
+        image: postgres:12.4-alpine
+        container_name: treninoo-db
+        ports:
+            - "5434:5432"
+        environment:
+            - POSTGRES_PASSWORD=root
+            - POSTGRES_USER=root
+            - POSTGRES_DB=treninoo-db

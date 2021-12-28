@@ -24,6 +24,9 @@ import Route from '@ioc:Adonis/Core/Route'
 import { TrainStatus } from '../model/TrainStatus'
 import { Station } from '../model/Station'
 import Env from '@ioc:Adonis/Core/Env'
+import NewFollowTrainValidator from 'App/Validators/NewFollowTrainValidator'
+import FollowTrain from 'App/Models/FollowTrain'
+import DeleteFollowTrainValidator from 'App/Validators/DeleteFollowTrainValidator'
 
 Route.get('/', async () => {
   return { hello: 'world' }
@@ -86,5 +89,29 @@ Route.get('/details/:departureStation/:trainCode', async ({ request, response })
   response.send({
     url,
     status,
+  })
+})
+
+Route.post('/followtrain', async ({ request, response }) => {
+  const payload = await request.validate(NewFollowTrainValidator)
+
+  const followTrain = new FollowTrain()
+  await followTrain.fill({ ...payload }).save()
+
+  response.send({
+    success: true,
+    payload,
+  })
+})
+
+Route.delete('/followtrain', async ({ request, response }) => {
+  const payload = await request.validate(DeleteFollowTrainValidator)
+
+  const followTrain = new FollowTrain()
+  await followTrain.fill({ ...payload }).delete()
+
+  response.send({
+    success: true,
+    payload,
   })
 })
