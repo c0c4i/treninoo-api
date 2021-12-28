@@ -1,11 +1,6 @@
 import { schema } from '@ioc:Adonis/Core/Validator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-enum FollowType {
-  ARRIVAL = 'arrival',
-  DEPARTURE = 'departure',
-}
-
 export default class DeleteFollowTrainValidator {
   constructor(protected ctx: HttpContextContract) {}
 
