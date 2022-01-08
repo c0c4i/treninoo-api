@@ -22,7 +22,8 @@
     "./providers/AppProvider",
     "@adonisjs/core",
     "@adonisjs/lucid",
-    "adonis5-scheduler"
+    "adonis5-scheduler",
+    "adonis-fcm"
   ],
   "aceProviders": [
     "@adonisjs/repl"

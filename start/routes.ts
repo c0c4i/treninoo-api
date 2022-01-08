@@ -104,15 +104,60 @@ Route.post('/followtrain', async ({ request, response }) => {
   })
 })
 
-Route.delete('/followtrain', async ({ request, response }) => {
-  const payload = await request.validate(DeleteFollowTrainValidator)
+Route.delete(
+  '/followtrain/:deviceToken/:trainCode/:departureStation',
+  async ({ params, response }) => {
+    const followTrain = new FollowTrain().fill({ ...params })
+    await followTrain.delete()
 
-  const followTrain = new FollowTrain()
-  await followTrain.fill({ ...payload }).delete()
+    response.send({
+      success: true,
+    })
+  }
+)
+
+Route.get(
+  '/followtrain/:deviceToken/:trainCode/:departureStation',
+  async ({ params, response }) => {
+    const followTrain = new FollowTrain().fill({ ...params })
+    var finded = await FollowTrain.query()
+      .where('trainCode', followTrain.trainCode)
+      .where('departureStation', followTrain.departureStation)
+      .where('deviceToken', followTrain.deviceToken)
+      .first()
+
+    response.send({
+      success: finded != null,
+      payload: finded,
+    })
+  }
+)
+
+Route.get('/followtrain/:departureStation/:trainCode', async ({ params, response }) => {
+  const departureStation = params.departureStation
+  const trainCode = params.trainCode
+  const url = Env.get('BASE_URL') + `/andamentoTreno/${departureStation}/${trainCode}/${Date.now()}`
+
+  const { data: data } = await axios.get(url)
+
+  const stops = TrainStatus.fromJson(data).stops
+
+  let lastDeparture: number = 0
+  stops.forEach((stop, index) => {
+    if (stop.actualDepartureTime != null) lastDeparture = index + 1
+  })
+
+  let stations: Station[] = []
+  if (lastDeparture < stops.length - 1) {
+    for (let i = lastDeparture + 1; i < stops.length; i++) {
+      let station: Station = new Station(stops[i].stationCode, stops[i].stationName)
+      stations.push(station)
+    }
+  }
 
   response.send({
-    success: true,
-    payload,
+    url,
+    stations,
   })
 })
 
