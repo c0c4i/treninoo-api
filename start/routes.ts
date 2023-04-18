@@ -88,3 +88,5 @@ Route.get('/details/:departureStation/:trainCode', async ({ request, response })
     status,
   })
 })
+
+Route.post('/feedback', 'FeedbacksController.create')
