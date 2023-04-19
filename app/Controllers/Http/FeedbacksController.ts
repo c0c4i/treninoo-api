@@ -9,10 +9,8 @@ export default class FeedbacksController {
       message
         .from(Env.get('MAIL_FROM'), 'Treninoo')
         .to(Env.get('MAIL_TO'))
-        .subject('New Location')
-        .text(
-          `New ${payload.type} added with coordinates ${payload.latitude}, ${payload.longitude}`
-        )
+        .subject('Hai un nuovo feedback!')
+        .text(payload.feedback)
     })
 
     response.send({ success: true })
