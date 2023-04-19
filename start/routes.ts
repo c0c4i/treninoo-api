@@ -90,3 +90,4 @@ Route.get('/details/:departureStation/:trainCode', async ({ request, response })
 })
 
 Route.post('/feedback', 'FeedbacksController.create')
+Route.post('/email', 'EmailController.receive')
