@@ -27,7 +27,7 @@
     "youch-terminal": "^1.1.1"
   },
   "dependencies": {
-    "@adonisjs/core": "^5.3.0",
+    "@adonisjs/core": "^5.9.0",
     "@adonisjs/mail": "^8.1.2",
     "@adonisjs/repl": "^3.1.0",
     "axios": "^0.22.0",
