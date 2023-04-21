@@ -16,8 +16,8 @@ jobs:
         name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
-        context: git
         with:
+          context: git
           images: |
             ${{ secrets.DOCKERHUB_USERNAME }}/treninoo-api
           tags: |
