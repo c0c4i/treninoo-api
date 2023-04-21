@@ -196,4 +196,4 @@ Nessuno ma se volete aiutare siete i benvenuti, scrivetemi pure una [email](mail
 
 ## Copyright and License
 
-Copyright 2022 Samuele Besoli. Code released under the MIT license.
+Copyright 2023 Samuele Besoli. Code released under the MIT license.
