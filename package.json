@@ -9,7 +9,9 @@
     "build:unix": "./build.sh",
     "start": "node server.js",
     "lint": "eslint . --ext=.ts",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "docker:build": "eval \"./build.sh $(date +\"%F\")\"_\"$(git rev-parse HEAD | cut -c1-8)\"",
+    "docker:version": "echo \"$(date +\"%F\")\"_\"$(git rev-parse HEAD | cut -c1-8)\""
   },
   "devDependencies": {
     "@adonisjs/assembler": "^5.0.0",
