@@ -26,32 +26,13 @@ import { Station } from '../model/Station'
 import Env from '@ioc:Adonis/Core/Env'
 import NewFollowTrainValidator from 'App/Validators/NewFollowTrainValidator'
 import FollowTrain from 'App/Models/FollowTrain'
-import DeleteFollowTrainValidator from 'App/Validators/DeleteFollowTrainValidator'
+import Train from 'App/Models/Train'
 
 Route.get('/', async () => {
   return { hello: 'world' }
 })
 
-Route.get('/departurestation/:id', async ({ request, response }) => {
-  const id = request.param('id')
-  const url = Env.get('BASE_URL') + `/cercaNumeroTrenoTrenoAutocomplete/${id}`
-
-  const { data: data } = await axios.get(url)
-
-  const lines = data.split('\n')
-  lines.splice(lines.length - 1, 1)
-
-  const stations: Station[] = []
-  lines.forEach((line) => {
-    stations.push(Station.fromDeparture(line))
-  })
-
-  response.send({
-    url: url,
-    total: stations.length,
-    stations: stations,
-  })
-})
+Route.get('/departurestation/:id', 'DepartureStationsController.index')
 
 Route.get('/autocomplete/:word', async ({ request, response }) => {
   const id = request.param('word')
@@ -77,20 +58,7 @@ Route.get('/autocomplete/:word', async ({ request, response }) => {
   })
 })
 
-Route.get('/details/:departureStation/:trainCode', async ({ request, response }) => {
-  const departureStation = request.param('departureStation')
-  const trainCode = request.param('trainCode')
-  const url = Env.get('BASE_URL') + `/andamentoTreno/${departureStation}/${trainCode}/${Date.now()}`
-
-  const { data: data } = await axios.get(url)
-
-  const status = TrainStatus.fromJson(data)
-
-  response.send({
-    url,
-    status,
-  })
-})
+Route.get('/details/:departureStation/:trainCode', 'TrainStatusController.index')
 
 Route.post('/followtrain', async ({ request, response }) => {
   const payload = await request.validate(NewFollowTrainValidator)
@@ -127,7 +95,7 @@ Route.get(
       .first()
 
     response.send({
-      success: finded != null,
+      success: finded !== null,
       payload: finded,
     })
   }
@@ -144,7 +112,7 @@ Route.get('/followtrain/:departureStation/:trainCode', async ({ params, response
 
   let lastDeparture: number = 0
   stops.forEach((stop, index) => {
-    if (stop.actualDepartureTime != null) lastDeparture = index + 1
+    if (stop.actualDepartureTime !== null) lastDeparture = index + 1
   })
 
   let stations: Station[] = []
@@ -166,3 +134,31 @@ Route.get('/yes', async ({ response }) => {
     okay: 'lesgo',
   })
 })
+
+// Route.get('/trains', async ({ request, response }) => {
+//   const someController = new DepartureStationsController()
+
+//   for (let i = 40000; i < 100000; i++) {
+//     const result = await someController.index({ request }, i)
+//     console.log({ tainCode: i, found: result.total })
+//     for (let j = 0; j < result.total; j++) {
+//       const element = result.stations[j]
+
+//       const train = new Train()
+//       try {
+//         await train
+//           .fill({
+//             trainCode: i,
+//             departureStation: element.stationCode,
+//           })
+//           .save()
+//       } catch (e) {
+//         console.log({ tainCode: i, found: result.total, error: true, e })
+//       }
+//     }
+//   }
+
+//   response.send({ ok: 'lesgooo' })
+// })
+
+Route.get('/statistics', 'GetStatisticsController.index')

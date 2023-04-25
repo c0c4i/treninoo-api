@@ -9,7 +9,7 @@ export default class Statistic extends BaseModel {
   public date: Date
 
   @column()
-  public trainCode: string
+  public trainCode: number
 
   @column()
   public departureStation: string

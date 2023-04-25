@@ -13,9 +13,9 @@ class TrainStatus {
     const trainType = json.categoria
     const trainCode = json.numeroTreno
     const stops: Stop[] = []
-    json.fermate.forEach((stop) => {
+    for (const stop of json.fermate) {
       stops.push(Stop.fromJson(stop))
-    })
+    }
     return new TrainStatus(trainType, trainCode, stops)
   }
 }
