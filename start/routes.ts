@@ -88,3 +88,16 @@ Route.get('/details/:departureStation/:trainCode', async ({ request, response })
     status,
   })
 })
+
+Route.get('/download/:id', async ({ request, response }) => {
+  const resourceId = request.param('id')
+
+  const url = 'https://www.lefrecce.it/Channels.Website.BFF.WEB/website/post/purchase/pdf'
+
+  const { data: data } = await axios.get(url, {
+    params: { resourceId },
+    responseType: 'blob',
+  })
+
+  response.send(data)
+})

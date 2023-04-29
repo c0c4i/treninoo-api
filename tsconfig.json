@@ -10,7 +10,8 @@
       "App/*": ["./app/*"],
       "Config/*": ["./config/*"],
       "Contracts/*": ["./contracts/*"],
-      "Database/*": ["./database/*"]
+      "Database/*": ["./database/*"],
+      "lib": ["webworker"]
     },
     "types": ["@adonisjs/core", "@adonisjs/repl"]
   }
