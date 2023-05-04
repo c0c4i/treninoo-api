@@ -1,26 +1,20 @@
-ARG NODE_IMAGE=node:16.13.1-alpine
+# We'll use the Node slim image as a base cos it's light and nice
+FROM node:14
 
-FROM $NODE_IMAGE AS base
-RUN apk --no-cache add dumb-init
-RUN mkdir -p /home/node/app && chown node:node /home/node/app
-WORKDIR /home/node/app
-USER node
-RUN mkdir tmp
+WORKDIR /api/treninoo
 
-FROM base AS dependencies
-COPY --chown=node:node ./package*.json ./
-RUN npm ci
-COPY --chown=node:node . .
+COPY . .
 
-FROM dependencies AS build
-RUN node ace build --production --ignore-ts-errors
+RUN yarn install
 
-FROM base AS production
-ENV NODE_ENV=production
-ENV PORT=$PORT
-ENV HOST=0.0.0.0
-COPY --chown=node:node ./package*.json ./
-RUN npm ci --production
-COPY --chown=node:node --from=build /home/node/app/build .
-EXPOSE $PORT
-CMD [ "dumb-init", "node", "server.js" ]
+RUN yarn build
+
+WORKDIR /api/treninoo/build
+
+RUN yarn install --production
+
+COPY .env .env
+
+EXPOSE 3333
+
+CMD node server.js
