@@ -1,20 +1,27 @@
-# We'll use the Node slim image as a base cos it's light and nice
-FROM node:14
-
-WORKDIR /api/treninoo
-
+# Build AdonisJS
+FROM node:16-alpine as builder
+# Set directory for all files
+WORKDIR /home/node/app
+# Copy over package.json files
+COPY package*.json ./
+# Install all packages
+RUN npm install
+# Copy over source code
 COPY . .
+# Build AdonisJS for production
+RUN npm run build --production
 
-RUN yarn install
-
-RUN yarn build
-
-WORKDIR /api/treninoo/build
-
+# Build final runtime container
+FROM node:16-alpine
+# Set environment variables
+ENV NODE_ENV=production
+# Set home dir
+WORKDIR /home/node/app
+# Copy over built files
+COPY --from=builder /home/node/app/build .
+# Install only required packages
 RUN yarn install --production
-
-COPY .env .env
-
+# Expose port to outside world
 EXPOSE 3333
-
-CMD node server.js
+# Start server up
+CMD [ "node", "server.js" ]
