@@ -4,16 +4,8 @@ services:
   api:
     container_name: treninoo-api
     restart: always
-    build:
-      context: .
-      target: dependencies
-    ports:
-      - ${PORT}:${PORT}
-      - 9229:9229
+    image: treninoo-api:2023-05-05_35eb707b
     env_file:
       - .env
-    volumes:
-      - ./:/home/node/app
-      # Uncomment the below line if you developing on MacOS
-      - /home/node/app/node_modules
-    command: dumb-init node ace serve --watch --node-args="--inspect=0.0.0.0"
+    ports:
+      - ${PORT}:${PORT}

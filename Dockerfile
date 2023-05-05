@@ -1,26 +1,27 @@
-ARG NODE_IMAGE=node:16.13.1-alpine
-
-FROM $NODE_IMAGE AS base
-RUN apk --no-cache add dumb-init
-RUN mkdir -p /home/node/app && chown node:node /home/node/app
+# Build AdonisJS
+FROM node:16-alpine as builder
+# Set directory for all files
 WORKDIR /home/node/app
-USER node
-RUN mkdir tmp
+# Copy over package.json files
+COPY package*.json ./
+# Install all packages
+RUN npm install
+# Copy over source code
+COPY . .
+# Build AdonisJS for production
+RUN npm run build --production
 
-FROM base AS dependencies
-COPY --chown=node:node ./package*.json ./
-RUN npm ci
-COPY --chown=node:node . .
-
-FROM dependencies AS build
-RUN node ace build --production --ignore-ts-errors
-
-FROM base AS production
+# Build final runtime container
+FROM node:16-alpine
+# Set environment variables
 ENV NODE_ENV=production
-ENV PORT=$PORT
-ENV HOST=0.0.0.0
-COPY --chown=node:node ./package*.json ./
-RUN npm ci --production
-COPY --chown=node:node --from=build /home/node/app/build .
-EXPOSE $PORT
-CMD [ "dumb-init", "node", "server.js" ]
+# Set home dir
+WORKDIR /home/node/app
+# Copy over built files
+COPY --from=builder /home/node/app/build .
+# Install only required packages
+RUN yarn install --production
+# Expose port to outside world
+EXPOSE 3333
+# Start server up
+CMD [ "node", "server.js" ]
