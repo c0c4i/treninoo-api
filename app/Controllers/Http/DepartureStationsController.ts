@@ -14,10 +14,14 @@ export default class DepartureStationsController {
     const lines = data.split('\n')
     lines.splice(lines.length - 1, 1)
 
-    const stations: Station[] = []
-    lines.forEach((line) => {
+    let stations: Station[] = []
+    for (const line of lines) {
       stations.push(Station.fromDeparture(line))
-    })
+    }
+
+    stations = stations.filter(
+      (item, index, self) => index === self.findIndex((obj) => obj.stationCode === item.stationCode)
+    )
 
     return {
       url: url,

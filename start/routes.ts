@@ -27,6 +27,7 @@ import Env from '@ioc:Adonis/Core/Env'
 import NewFollowTrainValidator from 'App/Validators/NewFollowTrainValidator'
 import FollowTrain from 'App/Models/FollowTrain'
 import Train from 'App/Models/Train'
+import DepartureStationsController from 'App/Controllers/Http/DepartureStationsController'
 
 Route.get('/', async () => {
   return { hello: 'world' }
@@ -135,30 +136,30 @@ Route.get('/yes', async ({ response }) => {
   })
 })
 
-// Route.get('/trains', async ({ request, response }) => {
-//   const someController = new DepartureStationsController()
+Route.get('/trains', async ({ request, response }) => {
+  const controller = new DepartureStationsController()
 
-//   for (let i = 40000; i < 100000; i++) {
-//     const result = await someController.index({ request }, i)
-//     console.log({ tainCode: i, found: result.total })
-//     for (let j = 0; j < result.total; j++) {
-//       const element = result.stations[j]
+  for (let i = 52316; i < 100000; i++) {
+    const result = await controller.index({ request }, i)
+    console.log({ tainCode: i, found: result.total })
+    for (let j = 0; j < result.total; j++) {
+      const element = result.stations[j]
 
-//       const train = new Train()
-//       try {
-//         await train
-//           .fill({
-//             trainCode: i,
-//             departureStation: element.stationCode,
-//           })
-//           .save()
-//       } catch (e) {
-//         console.log({ tainCode: i, found: result.total, error: true, e })
-//       }
-//     }
-//   }
+      const train = new Train()
+      try {
+        await train
+          .fill({
+            trainCode: i,
+            departureStation: element.stationCode,
+          })
+          .save()
+      } catch (e) {
+        console.log({ tainCode: i, found: result.total, error: true, e })
+      }
+    }
+  }
 
-//   response.send({ ok: 'lesgooo' })
-// })
+  response.send({ ok: 'lesgooo' })
+})
 
 Route.get('/statistics', 'GetStatisticsController.index')
