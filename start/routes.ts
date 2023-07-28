@@ -26,3 +26,6 @@ Route.get('/autocomplete/:word', 'StationController.autocomplete')
 Route.get('/details/:departureStation/:trainCode', 'TrainStatusController.show')
 Route.post('/feedback', 'FeedbacksController.create')
 Route.post('/email', 'EmailController.receive')
+
+Route.get('/rfi/autocomplete/:word', 'RfiStationController.autocomplete')
+Route.get('/rfi/station/:type/:stationCode', 'RfiStationController.status')
