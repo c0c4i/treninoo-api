@@ -24,6 +24,12 @@ class Station {
     const stationName = line.split('|')[0]
     return new Station(stationCode, stationName)
   }
+
+  static fromLeFrecce(body) {
+    const stationCode = body.id
+    const stationName = body.displayName
+    return new Station(stationCode, stationName)
+  }
 }
 
 export { Station }
