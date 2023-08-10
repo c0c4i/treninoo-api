@@ -27,7 +27,6 @@ class Solution {
     const destination = body.destination
     const departureTime = new Date(body.departureTime)
     const arrivalTime = new Date(body.arrivalTime)
-    console.log(body.nodes)
     const trains = body.nodes.map((train) => SolutionTrain.fromLeFrecce(train))
     return new Solution(origin, destination, departureTime, arrivalTime, trains)
   }

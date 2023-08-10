@@ -4,19 +4,22 @@ class SolutionTrain {
   departureTime: Date
   arrivalTime: Date
   trainCode: string
+  category?: string
 
   constructor(
     origin: string,
     destination: string,
     departureTime: Date,
     arrivalTime: Date,
-    trainCode: string
+    trainCode: string,
+    category: string
   ) {
     ;(this.origin = origin),
       (this.destination = destination),
       (this.departureTime = departureTime),
       (this.arrivalTime = arrivalTime),
-      (this.trainCode = trainCode)
+      (this.trainCode = trainCode),
+      (this.category = category)
   }
 
   static fromLeFrecce(body) {
@@ -25,7 +28,8 @@ class SolutionTrain {
     const departureTime = new Date(body.departureTime)
     const arrivalTime = new Date(body.arrivalTime)
     const trainCode = body.train.description
-    return new SolutionTrain(origin, destination, departureTime, arrivalTime, trainCode)
+    const category = body.train.acronym
+    return new SolutionTrain(origin, destination, departureTime, arrivalTime, trainCode, category)
   }
 }
 
