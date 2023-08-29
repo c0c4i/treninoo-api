@@ -31,3 +31,6 @@ Route.get('/rfi/autocomplete/:word', 'RfiStationController.autocomplete')
 Route.get('/rfi/station/:type/:stationCode', 'RfiStationController.status')
 Route.get('/lefrecce/autocomplete/:word', 'LeFrecceStationController.autocomplete')
 Route.get('/lefrecce/solutions', 'LeFrecceGetSolutionsController.index')
+
+Route.get('/stations/:id/arrival', 'ViaggioTrenoStationController.status')
+Route.get('/stations/:id/departure', 'ViaggioTrenoStationController.status')
