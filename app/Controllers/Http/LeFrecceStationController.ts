@@ -8,7 +8,11 @@ export default class LeFrecceStationController {
 
     const { data: data } = await axios.get(url)
 
-    const stations = data.map((station: string) => Station.fromLeFrecce(station))
+    const stations: Station[] = []
+    for (const station of data) {
+      if (station.multistation) continue
+      stations.push(Station.fromLeFrecce(station))
+    }
 
     response.send({
       url: url,
