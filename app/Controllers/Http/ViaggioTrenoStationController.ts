@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { StationTrain } from '../../../model/StationTrain'
+import Env from '@ioc:Adonis/Core/Env'
 
 export default class ViaggioTrenoStationController {
   public async status({ request, response }) {
@@ -18,7 +19,7 @@ export default class ViaggioTrenoStationController {
     // Set timezone to Rome (GMT+2), but handle the hour changes
     date.setHours(date.getHours() + 2)
 
-    let url = `http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/${typeViaggioTreno}/${id}/${date.toUTCString()}`
+    let url = Env.get('BASE_URL') + `/${typeViaggioTreno}/${id}/${date.toUTCString()}`
     url += '+0200'
     url = encodeURI(url)
     const { data: data } = await axios.get(url)
