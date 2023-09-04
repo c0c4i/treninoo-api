@@ -6,6 +6,7 @@ export default class CreateFeedbackValidator {
 
   public schema = schema.create({
     feedback: schema.string(),
+    email: schema.string.optional(),
   })
 
   public messages = {}

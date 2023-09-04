@@ -10,7 +10,11 @@ export default class FeedbacksController {
         .from(Env.get('MAIL_FROM'), 'Treninoo')
         .to(Env.get('MAIL_TO'))
         .subject('Hai un nuovo feedback!')
-        .text(payload.feedback)
+        .html(
+          `<p><b>Feedback:</b> ${payload.feedback}</p><p><b>Email:</b> ${
+            payload.email ? payload.email : 'Non specificata'
+          }</p>`
+        )
     })
 
     response.send({ success: true })
