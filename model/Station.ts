@@ -5,7 +5,7 @@ import { MAP_PRIORITY } from '../utils/priorities'
 class Station {
   stationCode: string
   stationName: string
-  priority: number
+  priority: number = 5
 
   constructor(stationCode: string, stationName: string) {
     ;(this.stationCode = stationCode),

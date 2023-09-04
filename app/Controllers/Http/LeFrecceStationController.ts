@@ -5,7 +5,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 export default class LeFrecceStationController {
   public async autocomplete({ request, response }) {
     const id = request.param('word')
-    const url = `https://www.lefrecce.it/Channels.Website.BFF.WEB/website/locations/search?name=${id}&limit=20`
+    const url = `https://www.lefrecce.it/Channels.Website.BFF.WEB/website/locations/search?name=${id}&limit=100`
 
     const { data: data } = await axios.get(url)
 
@@ -26,10 +26,11 @@ export default class LeFrecceStationController {
         s.priority = result[0].priority
       }
 
-      stations.sort((station1: Station, station2: Station) => station1.priority - station2.priority)
-
       stations.push(s)
     }
+
+    // Sort by priority
+    stations.sort((station1: Station, station2: Station) => station1.priority - station2.priority)
 
     response.send({
       url: url,
