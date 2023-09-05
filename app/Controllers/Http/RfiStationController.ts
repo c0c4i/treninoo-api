@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { Station } from '../../../model/Station'
 import { StationTrain } from '../../../model/StationTrain'
+import { MAP_LOGO } from '../../../utils/logos'
 
 export default class RfiStationController {
   public async autocomplete({ request, response }) {
@@ -15,7 +16,6 @@ export default class RfiStationController {
 
     // Extract the data from the select element
     const selectElement = $('select#ElencoLocalita')
-    console.log(selectElement)
     const options = selectElement.find('option')
 
     // Define list of stations object
@@ -71,23 +71,27 @@ export default class RfiStationController {
       const brand = brandImg.attr('alt')?.trim() // Extract brand information
 
       const trainCode = $(element).find('td#RTreno').text().trim()
-      const category = $(element).find('td#RCategoria img').attr('src')
       const destination = $(element).find('td#RStazione div').text().trim()
       const time = $(element).find('td#ROrario').text().trim()
       const delay = $(element).find('td#RRitardo').text().trim()
       const platform = $(element).find('td#RBinario div').text().trim()
-      const departing = $(element).find('td#RExLampeggio img').attr('alt')?.trim() === 'Yes'
+
+      // Get category from logo
+      const categoryImage = $(element).find('td#RCategoria img').attr('src')
+      const category = MAP_LOGO.get(categoryImage ?? '')
 
       const train = new StationTrain({
         trainCode,
-        brand,
         category,
-        destination,
+        departureCode: undefined,
+        stationName: destination,
         time,
         delay,
-        platform,
-        departing,
+        plannedPlatform: platform,
+        actualPlatform: platform,
       })
+
+      train.brand = brand
 
       if (train.category === undefined) {
         console.log(trainCode, train.category)

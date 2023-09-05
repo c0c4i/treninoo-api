@@ -1,12 +1,13 @@
 class StationTrain {
   trainCode: string
-  departureCode: string
+  departureCode?: string
   category?: string
   stationName?: string
   time: string
   plannedPlatform?: string
   actualPlatform?: string
   delay: string
+  brand?: string
 
   constructor({
     trainCode,
