@@ -1,11 +1,14 @@
+import { Station } from './Station'
+
 class Stop {
-  stationCode: string
-  stationName: string
+  station: Station
 
   plannedDepartureTime: number
+  predictedDepartureTime: number
   actualDepartureTime: number
 
   plannedArrivalTime: number
+  predictedArrivalTime: number
   actualArrivalTime: number
 
   plannedDepartureRail: string
@@ -14,65 +17,41 @@ class Stop {
   plannedArrivalRail: string
   actualArrivalRail: string
 
+  currentStation: boolean
   delay: string
 
-  constructor(
-    stationCode: string,
-    stationName: string,
-    plannedDepartureTime: number,
-    actualDepartureTime: number,
-    plannedArrivalTime: number,
-    actualArrivalTime: number,
-    plannedDepartureRail: string,
-    actualDepartureRail: string,
-    plannedArrivalRail: string,
-    actualArrivalRail: string,
-    delay: string
-  ) {
-    ;(this.stationCode = stationCode),
-      (this.stationName = stationName),
-      (this.plannedDepartureTime = plannedDepartureTime),
-      (this.actualDepartureTime = actualDepartureTime),
-      (this.plannedArrivalTime = plannedArrivalTime),
-      (this.actualArrivalTime = actualArrivalTime),
-      (this.plannedDepartureRail = plannedDepartureRail),
-      (this.actualDepartureRail = actualDepartureRail),
-      (this.plannedArrivalRail = plannedArrivalRail),
-      (this.actualArrivalRail = actualArrivalRail),
-      (this.delay = delay)
+  constructor(json: any) {
+    Object.assign(this, json)
   }
 
   static fromJson(json: any) {
-    const stationCode = json.id
-    const stationName = json.stazione
-
-    const plannedDepartureTime = json.partenza_teorica
-    const actualDepartureTime = json.partenzaReale
-
-    const plannedArrivalTime = json.arrivo_teorico
-    const actualArrivalTime = json.arrivoReale
-
-    const plannedDepartureRail = json.binarioProgrammatoPartenzaDescrizione
-    const actualDepartureRail = json.binarioEffettivoPartenzaDescrizione
-
-    const plannedArrivalRail = json.binarioProgrammatoArrivoDescrizione
-    const actualArrivalRail = json.binarioEffettivoArrivoDescrizione
-
     const delay = json.ritardo
 
-    return new Stop(
-      stationCode,
-      stationName,
-      plannedDepartureTime,
-      actualDepartureTime,
-      plannedArrivalTime,
-      actualArrivalTime,
-      plannedDepartureRail,
-      actualDepartureRail,
-      plannedArrivalRail,
-      actualArrivalRail,
-      delay
-    )
+    const plannedDepartureTime = json.fermata.partenza_teorica
+    const plannedArrivalTime = json.fermata.arrivo_teorico
+
+    const predictedDepartureTime = this._predictTime(plannedDepartureTime, delay)
+    const predictedArrivalTime = this._predictTime(plannedArrivalTime, delay)
+
+    return new Stop({
+      station: new Station(json.id, json.stazione),
+      plannedDepartureTime: json.fermata.partenza_teorica,
+      predictedDepartureTime,
+      actualDepartureTime: json.fermata.partenzaReale,
+      plannedArrivalTime: json.fermata.arrivo_teorico,
+      predictedArrivalTime,
+      actualArrivalTime: json.fermata.arrivoReale,
+      plannedDepartureRail: json.fermata.binarioProgrammatoPartenzaDescrizione,
+      actualDepartureRail: json.fermata.binarioEffettivoPartenzaDescrizione,
+      plannedArrivalRail: json.fermata.binarioProgrammatoArrivoDescrizione,
+      actualArrivalRail: json.fermata.binarioEffettivoArrivoDescrizione,
+      currentStation: json.stazioneCorrente ?? false,
+      delay: json.ritardo,
+    })
+  }
+
+  private static _predictTime(time: number, delay: string) {
+    return time + Number(delay) * 60 * 1000
   }
 }
 
