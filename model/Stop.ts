@@ -20,6 +20,8 @@ class Stop {
   currentStation: boolean
   delay: string
 
+  confirmed: boolean = false
+
   constructor(json: any) {
     Object.assign(this, json)
   }

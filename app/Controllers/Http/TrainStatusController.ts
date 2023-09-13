@@ -31,6 +31,20 @@ export default class TrainStatusController {
       const { data: dataStops } = await axios.get(urlStops)
 
       const stops = dataStops.map((stop) => Stop.fromJson(stop))
+
+      // Get current station index from stops array
+      const currentStationIndex = stops.findIndex((stop) => stop.currentStation)
+
+      // Set confirmed true for all stops before current station
+      for (let i = 0; i < currentStationIndex; i++) {
+        stops[i].confirmed = true
+      }
+
+      // Set confirmed true for current station if status.lastDetectionStation is equal to current station or if departureTime is not null
+      stops[currentStationIndex].confirmed =
+        status.lastDetectionStation === stops[currentStationIndex].station.name ||
+        stops[currentStationIndex].actualDepartureTime !== null
+
       status.stops = stops
 
       response.send({
