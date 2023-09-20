@@ -1,22 +1,20 @@
-// import MAP_PRIORITY from 'utils/priorities'
-
-import { MAP_PRIORITY } from '../utils/priorities'
-
 class Station {
   stationCode: string
   stationName: string
+  departureDate?: number
   priority: number = 5
 
-  constructor(stationCode: string, stationName: string) {
+  constructor(stationCode: string, stationName: string, departureDate?: number) {
     ;(this.stationCode = stationCode),
       (this.stationName = stationName),
-      (this.priority = MAP_PRIORITY.get(stationName) ?? 5)
+      (this.departureDate = departureDate)
   }
 
   static fromDeparture(line: string) {
     const stationCode = line.split('|')[1].split('-')[1]
     const stationName = line.split('|')[0].split(' - ')[1]
-    return new Station(stationCode, stationName)
+    const departureDate = Number(line.split('-').pop())
+    return new Station(stationCode, stationName, departureDate)
   }
 
   static fromAutocomplete(line: string) {

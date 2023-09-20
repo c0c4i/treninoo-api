@@ -23,7 +23,7 @@ class TrainStatus {
       trainCode: json.numeroTreno,
       lastDetectionTime: json.oraUltimoRilevamento,
       lastDetectionStation: json.stazioneUltimoRilevamento,
-      delay: json.ritardo,
+      delay: json.ritardo ?? 0,
       departureStation: new Station(json.idOrigine, json.origine),
       arrivalStationName: json.destinazione,
       firstDepartureTime: json.compOrarioPartenzaZero,

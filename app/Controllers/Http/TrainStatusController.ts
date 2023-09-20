@@ -30,7 +30,7 @@ export default class TrainStatusController {
 
       const { data: dataStops } = await axios.get(urlStops)
 
-      const stops = dataStops.map((stop) => Stop.fromJson(stop))
+      const stops = dataStops.map((stop) => Stop.fromJson(stop, status.delay))
 
       // Get current station index from stops array
       const currentStationIndex = stops.findIndex((stop) => stop.currentStation)

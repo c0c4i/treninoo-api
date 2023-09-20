@@ -18,7 +18,6 @@ class Stop {
   actualArrivalRail: string
 
   currentStation: boolean
-  delay: string
 
   confirmed: boolean = false
 
@@ -26,9 +25,7 @@ class Stop {
     Object.assign(this, json)
   }
 
-  static fromJson(json: any) {
-    const delay = json.ritardo
-
+  static fromJson(json: any, delay: number) {
     const plannedDepartureTime = json.fermata.partenza_teorica
     const plannedArrivalTime = json.fermata.arrivo_teorico
 
@@ -37,10 +34,10 @@ class Stop {
 
     return new Stop({
       station: new Station(json.id, json.stazione),
-      plannedDepartureTime: json.fermata.partenza_teorica,
+      plannedDepartureTime,
       predictedDepartureTime,
       actualDepartureTime: json.fermata.partenzaReale,
-      plannedArrivalTime: json.fermata.arrivo_teorico,
+      plannedArrivalTime,
       predictedArrivalTime,
       actualArrivalTime: json.fermata.arrivoReale,
       plannedDepartureRail: json.fermata.binarioProgrammatoPartenzaDescrizione,
@@ -48,12 +45,11 @@ class Stop {
       plannedArrivalRail: json.fermata.binarioProgrammatoArrivoDescrizione,
       actualArrivalRail: json.fermata.binarioEffettivoArrivoDescrizione,
       currentStation: json.stazioneCorrente ?? false,
-      delay: json.ritardo,
     })
   }
 
-  private static _predictTime(time: number, delay: string) {
-    return time + Number(delay) * 60 * 1000
+  private static _predictTime(time: number, delay: number) {
+    return time + delay * 60 * 1000
   }
 }
 
