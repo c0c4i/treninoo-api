@@ -29,7 +29,7 @@ class Stop {
     const plannedDepartureTime = json.fermata.partenza_teorica
     const plannedArrivalTime = json.fermata.arrivo_teorico
 
-    const predictedDepartureTime = this._predictTime(plannedDepartureTime, delay)
+    const predictedDepartureTime = this._predictTime(plannedDepartureTime, delay, true)
     const predictedArrivalTime = this._predictTime(plannedArrivalTime, delay)
 
     return new Stop({
@@ -48,7 +48,9 @@ class Stop {
     })
   }
 
-  private static _predictTime(time: number, delay: number) {
+  private static _predictTime(time: number, delay: number, ignoreDelay = false) {
+    // Ignore delay if the train is not late
+    if (delay <= 0 && ignoreDelay) delay = 0
     return time + delay * 60 * 1000
   }
 }
