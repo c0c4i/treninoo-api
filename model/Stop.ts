@@ -49,6 +49,7 @@ class Stop {
   }
 
   private static _predictTime(time: number, delay: number, ignoreDelay = false) {
+    if (time === null) return null
     // Ignore delay if the train is not late
     if (delay <= 0 && ignoreDelay) delay = 0
     return time + delay * 60 * 1000
