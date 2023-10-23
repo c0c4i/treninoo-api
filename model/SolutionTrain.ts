@@ -1,16 +1,16 @@
 class SolutionTrain {
   origin: string
   destination: string
-  departureTime: Date
-  arrivalTime: Date
+  departureTime: string
+  arrivalTime: string
   trainCode: string
   category?: string
 
   constructor(
     origin: string,
     destination: string,
-    departureTime: Date,
-    arrivalTime: Date,
+    departureTime: string,
+    arrivalTime: string,
     trainCode: string,
     category: string
   ) {
@@ -25,8 +25,8 @@ class SolutionTrain {
   static fromLeFrecce(body) {
     const origin = body.origin
     const destination = body.destination
-    const departureTime = new Date(body.departureTime)
-    const arrivalTime = new Date(body.arrivalTime)
+    const departureTime = body.departureTime.slice(0, -6)
+    const arrivalTime = body.arrivalTime.slice(0, -6)
     const trainCode = body.train.description
     const category = body.train.acronym
     return new SolutionTrain(origin, destination, departureTime, arrivalTime, trainCode, category)
