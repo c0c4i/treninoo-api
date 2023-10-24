@@ -6,7 +6,8 @@ class StationTrain {
   time: string
   plannedPlatform?: string
   actualPlatform?: string
-  delay: string
+  // TEMP FIX: delay renamed to ritardo to fix JSON parse in app
+  ritardo: string
   brand?: string
 
   constructor({
@@ -26,7 +27,7 @@ class StationTrain {
     this.time = time
     this.plannedPlatform = plannedPlatform
     this.actualPlatform = actualPlatform
-    this.delay = delay
+    this.ritardo = delay
   }
 
   static fromJson(json: any): StationTrain {
