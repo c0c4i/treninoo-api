@@ -5,17 +5,13 @@ import { Solution } from '../../../model/Solution'
 export default class LeFrecceGetSolutionsController {
   public async index({ request, response }) {
     const payload = await request.validate(GetSolutionValidator)
-    payload.date = new Date(payload.date)
-
-    // Add timrzone offset
-    payload.date.setHours(payload.date.getHours() + 2)
 
     const url = `https://www.lefrecce.it/Channels.Website.BFF.WEB/website/ticket/solutions`
 
     const { data: data } = await axios.post(url, {
       departureLocationId: payload.departureStation,
       arrivalLocationId: payload.arrivalStation,
-      departureTime: payload.date.toISOString(),
+      departureTime: payload.date.toString().slice(0, -6),
       adults: 1,
       children: 0,
       criteria: {

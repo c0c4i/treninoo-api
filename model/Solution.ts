@@ -3,15 +3,15 @@ import { SolutionTrain } from './SolutionTrain'
 class Solution {
   origin: string
   destination: string
-  departureTime: Date
-  arrivalTime: Date
+  departureTime: string
+  arrivalTime: string
   trains: SolutionTrain[]
 
   constructor(
     origin: string,
     destination: string,
-    departureTime: Date,
-    arrivalTime: Date,
+    departureTime: string,
+    arrivalTime: string,
     trains: SolutionTrain[]
   ) {
     ;(this.origin = origin),
@@ -25,8 +25,8 @@ class Solution {
     body = body.solution
     const origin = body.origin
     const destination = body.destination
-    const departureTime = new Date(body.departureTime)
-    const arrivalTime = new Date(body.arrivalTime)
+    const departureTime = body.departureTime.slice(0, -6)
+    const arrivalTime = body.arrivalTime.slice(0, -6)
     const trains = body.nodes.map((train) => SolutionTrain.fromLeFrecce(train))
     return new Solution(origin, destination, departureTime, arrivalTime, trains)
   }
