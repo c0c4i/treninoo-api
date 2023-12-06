@@ -27,7 +27,7 @@ class SolutionTrain {
     const destination = body.destination
     const departureTime = body.departureTime.slice(0, -6)
     const arrivalTime = body.arrivalTime.slice(0, -6)
-    const trainCode = body.train.description
+    const trainCode = body.train.name
     const category = body.train.acronym
     return new SolutionTrain(origin, destination, departureTime, arrivalTime, trainCode, category)
   }
