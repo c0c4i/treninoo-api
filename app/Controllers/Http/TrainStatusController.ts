@@ -16,13 +16,21 @@ export default class TrainStatusController {
 
     try {
       const { data: data } = await axios.get(urlStatus)
-      const { data: dataStops } = await axios.get(urlStops)
 
       // If the train is not found, send 404 response
       // Or fermate field is an empty array
-      if (data === '' || data.fermate.length === 0 || dataStops === '') {
+      if (data === '' || data.fermate.length === 0) {
         return response.status(404).send({
           url: urlStatus,
+          status: null,
+        })
+      }
+
+      const { data: dataStops } = await axios.get(urlStops)
+
+      if (dataStops === '') {
+        return response.status(404).send({
+          url: urlStops,
           status: null,
         })
       }
@@ -52,6 +60,7 @@ export default class TrainStatusController {
         status,
       })
     } catch (error) {
+      console.log(error)
       response.status(500).send({
         url: urlStatus,
         url2: urlStops,
