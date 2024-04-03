@@ -10,6 +10,10 @@ export default class GetSolutionValidator {
     date: schema.date({
       format: 'yyyy-MM-dd HH:mm',
     }),
+    onlyFrecce: schema.boolean.optional(),
+    onlyRegional: schema.boolean.optional(),
+    onlyIntercity: schema.boolean.optional(),
+    offset: schema.number.optional(),
   })
 
   public messages: CustomMessages = {}
