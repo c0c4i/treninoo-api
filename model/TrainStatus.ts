@@ -1,3 +1,4 @@
+import { timeToMilliseconds } from '../utils/time'
 import { Station } from './Station'
 import { Stop } from './Stop'
 
@@ -37,6 +38,58 @@ class TrainStatus {
     if (categories.length == 2) return categories[0]
     categories.pop()
     return categories.join(' ')
+  }
+
+  static fromItaloJson(json: any) {
+    const lastStation =
+      json.TrainSchedule.StazioniNonFerme[json.TrainSchedule.StazioniNonFerme.length - 1]
+
+    const delay = json.TrainSchedule.Distruption.DelayAmount ?? 0
+
+    const stops: Stop[] = []
+    const currentStation = json.TrainSchedule.Distruption.LocationCode
+
+    // Add first stop from TrainSchedule.StazionePartenza
+    const firstStation: Stop = Stop.fromItaloJson(
+      json.TrainSchedule.StazionePartenza,
+      delay,
+      currentStation
+    )
+
+    if (json.TrainSchedule.StazioniFerme.length > 0) {
+      firstStation.confirmed = true
+    }
+
+    stops.push(firstStation)
+
+    // Add passed stops from TrainSchedule.StazioniFerme
+    for (const stop of json.TrainSchedule.StazioniFerme) {
+      const s = Stop.fromItaloJson(stop, delay, currentStation)
+      s.confirmed = true
+      stops.push(s)
+    }
+
+    // Add last stop from TrainSchedule.StazioniNonFerme
+    for (const stop of json.TrainSchedule.StazioniNonFerme) {
+      const s = Stop.fromItaloJson(stop, delay, currentStation)
+      stops.push(s)
+    }
+
+    return new TrainStatus({
+      trainType: 'Italo',
+      trainCode: json.TrainSchedule.TrainNumber,
+      lastDetectionTime: timeToMilliseconds(json.LastUpdate),
+      // TODO Import stations on database to show current station
+      lastDetectionStation: 'Stazione non disponibile',
+      delay: delay ?? 0,
+      departureStation: new Station(
+        json.TrainSchedule.StazionePartenza.RfiLocationCode,
+        json.TrainSchedule.StazionePartenza.LocationDescription
+      ),
+      arrivalStationName: lastStation.LocationDescription,
+      firstDepartureTime: timeToMilliseconds(json.TrainSchedule.DepartureDate),
+      stops,
+    })
   }
 }
 

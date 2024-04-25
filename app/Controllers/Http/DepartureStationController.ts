@@ -1,6 +1,7 @@
 import Env from '@ioc:Adonis/Core/Env'
 import axios from 'axios'
 import { Station } from '../../../model/Station'
+import { checkItaloTrainCode } from '../../../utils/italo'
 
 export default class DepartureStationController {
   public async find({ request, response }) {
@@ -17,9 +18,12 @@ export default class DepartureStationController {
       stations.push(Station.fromDeparture(line))
     })
 
+    const italo_train_number = stations.length === 0 ? await checkItaloTrainCode(id) : false
+
     response.send({
       url: url,
       total: stations.length,
+      italo_train_number,
       stations: stations,
     })
   }
