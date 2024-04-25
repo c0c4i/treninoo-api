@@ -42,7 +42,9 @@ class TrainStatus {
 
   static fromItaloJson(json: any) {
     const lastStation =
-      json.TrainSchedule.StazioniNonFerme[json.TrainSchedule.StazioniNonFerme.length - 1]
+      json.TrainSchedule.StazioniNonFerme.length > 0
+        ? json.TrainSchedule.StazioniNonFerme[json.TrainSchedule.StazioniNonFerme.length - 1]
+        : json.TrainSchedule.StazioniFerme[json.TrainSchedule.StazioniFerme.length - 1]
 
     const delay = json.TrainSchedule.Distruption.DelayAmount ?? 0
 
@@ -81,13 +83,13 @@ class TrainStatus {
       lastDetectionTime: timeToMilliseconds(json.LastUpdate),
       // TODO Import stations on database to show current station
       lastDetectionStation: 'Stazione non disponibile',
-      delay: delay ?? 0,
+      delay: parseInt(delay) ?? 0,
       departureStation: new Station(
-        json.TrainSchedule.StazionePartenza.RfiLocationCode,
+        'italo',
         json.TrainSchedule.StazionePartenza.LocationDescription
       ),
       arrivalStationName: lastStation.LocationDescription,
-      firstDepartureTime: timeToMilliseconds(json.TrainSchedule.DepartureDate),
+      firstDepartureTime: json.TrainSchedule.DepartureDate,
       stops,
     })
   }

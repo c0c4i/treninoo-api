@@ -4,13 +4,13 @@ import { Station } from './Station'
 class Stop {
   station: Station
 
-  plannedDepartureTime: number
-  predictedDepartureTime: number
-  actualDepartureTime: number
+  plannedDepartureTime?: number
+  predictedDepartureTime?: number
+  actualDepartureTime?: number
 
-  plannedArrivalTime: number
-  predictedArrivalTime: number
-  actualArrivalTime: number
+  plannedArrivalTime?: number
+  predictedArrivalTime?: number
+  actualArrivalTime?: number
 
   plannedDepartureRail: string
   actualDepartureRail: string

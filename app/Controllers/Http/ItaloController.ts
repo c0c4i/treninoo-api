@@ -24,6 +24,21 @@ export default class ItalosController {
 
       const status = TrainStatus.fromItaloJson(data)
 
+      // Remove arrival time from first stop
+      status.stops[0].plannedArrivalTime = undefined
+      status.stops[0].predictedArrivalTime = undefined
+      status.stops[0].actualArrivalTime = undefined
+
+      // Remove departure time from last stop
+      status.stops[status.stops.length - 1].plannedDepartureTime = undefined
+      status.stops[status.stops.length - 1].predictedDepartureTime = undefined
+      status.stops[status.stops.length - 1].actualDepartureTime = undefined
+
+      // Remove actual arrival time from stops not confirmed
+      for (const stop of status.stops) {
+        if (!stop.confirmed) stop.actualArrivalTime = undefined
+      }
+
       response.send({
         url: url,
         status,
