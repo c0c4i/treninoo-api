@@ -18,12 +18,12 @@ export default class DepartureStationController {
       stations.push(Station.fromDeparture(line))
     })
 
-    const italo_train_number = stations.length === 0 ? await checkItaloTrainCode(id) : false
+    const is_italo = stations.length === 0 ? await checkItaloTrainCode(id) : false
 
     response.send({
       url: url,
       total: stations.length,
-      italo_train_number,
+      is_italo,
       stations: stations,
     })
   }
