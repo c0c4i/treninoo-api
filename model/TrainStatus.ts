@@ -49,13 +49,13 @@ class TrainStatus {
     const delay = json.TrainSchedule.Distruption.DelayAmount ?? 0
 
     const stops: Stop[] = []
-    const currentStation = json.TrainSchedule.Distruption.LocationCode
+    const currentStationCode = json.TrainSchedule.Distruption.LocationCode
 
     // Add first stop from TrainSchedule.StazionePartenza
     const firstStation: Stop = Stop.fromItaloJson(
       json.TrainSchedule.StazionePartenza,
       delay,
-      currentStation
+      currentStationCode
     )
 
     if (json.TrainSchedule.StazioniFerme.length > 0) {
@@ -66,14 +66,15 @@ class TrainStatus {
 
     // Add passed stops from TrainSchedule.StazioniFerme
     for (const stop of json.TrainSchedule.StazioniFerme) {
-      const s = Stop.fromItaloJson(stop, delay, currentStation)
-      s.confirmed = true
+      const s = Stop.fromItaloJson(stop, delay, currentStationCode)
+      s.confirmed = s.actualDepartureTime !== undefined
+      console.log(s.confirmed)
       stops.push(s)
     }
 
     // Add last stop from TrainSchedule.StazioniNonFerme
     for (const stop of json.TrainSchedule.StazioniNonFerme) {
-      const s = Stop.fromItaloJson(stop, delay, currentStation)
+      const s = Stop.fromItaloJson(stop, delay, currentStationCode)
       stops.push(s)
     }
 
@@ -81,8 +82,6 @@ class TrainStatus {
       trainType: 'Italo',
       trainCode: json.TrainSchedule.TrainNumber,
       lastDetectionTime: timeToMilliseconds(json.LastUpdate),
-      // TODO Import stations on database to show current station
-      lastDetectionStation: 'Stazione non disponibile',
       delay: parseInt(delay) ?? 0,
       departureStation: new Station(
         'italo',
