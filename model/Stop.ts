@@ -60,8 +60,8 @@ class Stop {
     const plannedDepartureTime = timeToMilliseconds(json.EstimatedDepartureTime)
     const plannedArrivalTime = timeToMilliseconds(json.EstimatedArrivalTime)
 
-    const predictedDepartureTime = this._predictTime(plannedDepartureTime, delay, true)
-    const predictedArrivalTime = this._predictTime(plannedArrivalTime, delay)
+    const predictedDepartureTime = this._predictTime(plannedDepartureTime!, delay, true)
+    const predictedArrivalTime = this._predictTime(plannedArrivalTime!, delay)
 
     const platform = json.ActualArrivalPlatform
 
