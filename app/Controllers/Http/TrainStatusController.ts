@@ -10,7 +10,7 @@ export default class TrainStatusController {
 
     // If departureStation is italo, use italo controller
     if (departureStation === 'italo') {
-      return response.redirect(`/italo/${trainCode}`)
+      return response.redirect().toRoute('italo.details', { trainCode })
     }
 
     const urlStatus =
