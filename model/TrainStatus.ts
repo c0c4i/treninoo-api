@@ -68,7 +68,6 @@ class TrainStatus {
     for (const stop of json.TrainSchedule.StazioniFerme) {
       const s = Stop.fromItaloJson(stop, delay, currentStationCode)
       s.confirmed = s.actualDepartureTime !== undefined
-      console.log(s.confirmed)
       stops.push(s)
     }
 
