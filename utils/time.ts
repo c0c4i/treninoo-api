@@ -1,7 +1,8 @@
 export { timeToMilliseconds }
 
-
 function timeToMilliseconds(time: string) {
+  if (time === '') return undefined
+
   const [hours, minutes] = time.split(':')
 
   const date = new Date()
