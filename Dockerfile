@@ -19,6 +19,10 @@ RUN cd build && npm ci --omit=dev
 FROM node:16-alpine
 # Set environment variables
 ENV NODE_ENV=production
+
+# Set timezone
+ENV TZ=Europe/Rome
+
 # Set home dir
 WORKDIR /home/node/app
 # Copy over built files
