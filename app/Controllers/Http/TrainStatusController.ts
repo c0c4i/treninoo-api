@@ -8,11 +8,6 @@ export default class TrainStatusController {
     const departureStation = request.param('departureStation')
     const trainCode = request.param('trainCode')
 
-    // If departureStation is italo, use italo controller
-    if (departureStation === 'italo') {
-      return response.redirect().toRoute('italo.details', { trainCode })
-    }
-
     const urlStatus =
       Env.get('BASE_URL') + `/andamentoTreno/${departureStation}/${trainCode}/${Date.now()}`
 
