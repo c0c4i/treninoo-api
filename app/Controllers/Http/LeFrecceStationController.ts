@@ -5,13 +5,14 @@ import Database from '@ioc:Adonis/Lucid/Database'
 export default class LeFrecceStationController {
   public async autocomplete({ request, response }) {
     const id = request.param('word')
+    const multistation = request.qs().multistation === 'true'
     const url = `https://www.lefrecce.it/Channels.Website.BFF.WEB/website/locations/search?name=${id}&limit=100`
 
     const { data: data } = await axios.get(url)
 
     const stations: Station[] = []
     for (const station of data) {
-      if (station.multistation) continue
+      if (station.multistation && !multistation) continue
       const s = Station.fromLeFrecce(station)
 
       // Get stationCode from last 5 letters of s.stationCode

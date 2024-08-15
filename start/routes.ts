@@ -34,3 +34,5 @@ Route.get('/lefrecce/solutions', 'LeFrecceGetSolutionsController.index')
 
 Route.get('/stations/:id/arrival', 'ViaggioTrenoStationController.status')
 Route.get('/stations/:id/departure', 'ViaggioTrenoStationController.status')
+
+Route.get('/italo/:trainCode', 'ItaloController.details').as('italo.details')
