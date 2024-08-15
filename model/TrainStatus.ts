@@ -66,6 +66,7 @@ class TrainStatus {
 
     // Add passed stops from TrainSchedule.StazioniFerme
     for (const stop of json.TrainSchedule.StazioniFerme) {
+      if (stop.RfiLocationCode === null) continue
       const s = Stop.fromItaloJson(stop, delay, currentStationCode)
       s.confirmed = s.actualDepartureTime !== undefined
       stops.push(s)
@@ -73,6 +74,7 @@ class TrainStatus {
 
     // Add last stop from TrainSchedule.StazioniNonFerme
     for (const stop of json.TrainSchedule.StazioniNonFerme) {
+      if (stop.RfiLocationCode === null) continue
       const s = Stop.fromItaloJson(stop, delay, currentStationCode)
       stops.push(s)
     }
