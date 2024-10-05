@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  psql-db:
+    image: postgres:12.4-alpine
+    container_name: treninoo-database
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=treninoo-db
+
+volumes:
+  postgres_volume:

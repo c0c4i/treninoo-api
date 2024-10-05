@@ -7,12 +7,13 @@ export default class TrainStatusController {
   public async show({ request, response }) {
     const departureStation = request.param('departureStation')
     const trainCode = request.param('trainCode')
+    const departureDate = request.param('departureDate') || Date.now()
 
     const urlStatus =
-      Env.get('BASE_URL') + `/andamentoTreno/${departureStation}/${trainCode}/${Date.now()}`
+      Env.get('BASE_URL') + `/andamentoTreno/${departureStation}/${trainCode}/${departureDate}`
 
     const urlStops =
-      Env.get('BASE_URL') + `/tratteCanvas/${departureStation}/${trainCode}/${Date.now()}`
+      Env.get('BASE_URL') + `/tratteCanvas/${departureStation}/${trainCode}/${departureDate}`
 
     try {
       const { data: data } = await axios.get(urlStatus)

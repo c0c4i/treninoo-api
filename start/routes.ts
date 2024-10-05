@@ -24,6 +24,7 @@ Route.get('/', 'DefaultController.index')
 Route.get('/departurestation/:id', 'DepartureStationController.find')
 Route.get('/autocomplete/:word', 'StationController.autocomplete')
 Route.get('/details/:departureStation/:trainCode', 'TrainStatusController.show')
+Route.get('/details/:departureStation/:trainCode/:departureDate', 'TrainStatusController.show')
 Route.post('/feedback', 'FeedbacksController.create')
 Route.post('/email', 'EmailController.receive')
 
