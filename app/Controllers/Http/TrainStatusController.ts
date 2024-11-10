@@ -38,6 +38,12 @@ export default class TrainStatusController {
 
       const status = TrainStatus.fromJson(data)
 
+      // If departureStation != status.departureStation.stationCode
+      // Force stationCode to be the param value
+      if (departureStation !== status.departureStation.stationCode) {
+        status.departureStation.stationCode = departureStation
+      }
+
       const stops = dataStops.map((stop) => Stop.fromJson(stop, status.delay))
 
       // Get current station index from stops array
