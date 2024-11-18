@@ -54,10 +54,8 @@ export default class TrainStatusController {
         stops[i].confirmed = true
       }
 
-      // Set confirmed to current station if lastDetectionStation is equal to current station or have an actualDepartureTime
-      stops[currentStationIndex].confirmed =
-        status.lastDetectionStation === stops[currentStationIndex].station.stationName ||
-        stops[currentStationIndex].actualDepartureTime !== null
+      // Set confirmed to current station if have an actualDepartureTime
+      stops[currentStationIndex].confirmed = stops[currentStationIndex].actualDepartureTime !== null
 
       status.stops = stops
 
