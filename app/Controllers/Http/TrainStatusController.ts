@@ -2,12 +2,18 @@ import Env from '@ioc:Adonis/Core/Env'
 import axios from 'axios'
 import { TrainStatus } from '../../../model/TrainStatus'
 import { Stop } from '../../../model/Stop'
+import ItalosController from './ItaloController'
 
 export default class TrainStatusController {
   public async show({ request, response }) {
     const departureStation = request.param('departureStation')
     const trainCode = request.param('trainCode')
     const departureDate = request.param('departureDate') || Date.now()
+
+    // If departureStation is italo, use italo controller to handle the request
+    if (departureStation === 'italo') {
+      return new ItalosController().details({ request, response })
+    }
 
     const urlStatus =
       Env.get('BASE_URL') + `/andamentoTreno/${departureStation}/${trainCode}/${departureDate}`
