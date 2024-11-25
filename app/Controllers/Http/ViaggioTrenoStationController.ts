@@ -53,8 +53,7 @@ export default class ViaggioTrenoStationController {
       .where('lefrecce_station_code', id)
       .first()
 
-    const stationCode = station?.viaggiotreno_station_code ?? 'S' + id.slice(-5)
-
+    const stationCode = station?.viaggiotreno_station_code ?? `S${id.toString().slice(-5)}`
     return this.status({ request, response, lefrecceStationCode: stationCode })
   }
 }
