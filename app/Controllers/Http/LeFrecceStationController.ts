@@ -15,16 +15,20 @@ export default class LeFrecceStationController {
       if (station.multistation && !multistation) continue
       const s = Station.fromLeFrecce(station)
 
-      // Get stationCode from last 5 letters of s.stationCode
-      const stationCode = `S${s.stationCode.toString().slice(-5)}`
-
       // Get priority from database
       const result = await Database.from('stations')
         .select('priority')
-        .where('viaggiotreno_station_code', stationCode.toString())
+        .where('lefrecce_station_code', s.stationCode)
 
       if (result.length > 0) {
         s.priority = result[0].priority
+      } else {
+        // Try with generated code
+        const stationCode = `S${s.stationCode.toString().slice(-5)}`
+        const result = await Database.from('stations')
+          .select('priority')
+          .where('viaggiotreno_station_code', stationCode)
+        if (result.length > 0) s.priority = result[0].priority
       }
 
       stations.push(s)
