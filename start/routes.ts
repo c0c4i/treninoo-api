@@ -25,6 +25,7 @@ Route.get('/departurestation/:id', 'DepartureStationController.find')
 Route.get('/autocomplete/:word', 'StationController.autocomplete')
 Route.get('/details/:departureStation/:trainCode', 'TrainStatusController.show')
 Route.get('/details/:departureStation/:trainCode/:departureDate', 'TrainStatusController.show')
+Route.get('/italo/:trainCode', 'ItaloController.details')
 Route.post('/feedback', 'FeedbacksController.create')
 Route.post('/email', 'EmailController.receive')
 
@@ -36,4 +37,7 @@ Route.get('/lefrecce/solutions', 'LeFrecceGetSolutionsController.index')
 Route.get('/stations/:id/arrival', 'ViaggioTrenoStationController.status')
 Route.get('/stations/:id/departure', 'ViaggioTrenoStationController.status')
 
-Route.get('/italo/:trainCode', 'ItaloController.details').as('italo.details')
+Route.get('/lefrecce/stations/:id/arrival', 'ViaggioTrenoStationController.statusLeFrecce')
+Route.get('/lefrecce/stations/:id/departure', 'ViaggioTrenoStationController.statusLeFrecce')
+
+Route.get('/stations/dump', 'ViaggioTrenoStationController.dump')

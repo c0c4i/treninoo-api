@@ -1,9 +1,10 @@
 import axios from 'axios'
 import { StationTrain } from '../../../model/StationTrain'
 import Env from '@ioc:Adonis/Core/Env'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class ViaggioTrenoStationController {
-  public async status({ request, response }) {
+  public async status({ request, response, lefrecceStationCode }) {
     // Get last word from the URL
     const type = request.url().split('/').pop()
 
@@ -12,7 +13,7 @@ export default class ViaggioTrenoStationController {
     // If `type` == 'arrival', then `type` == 'arrivi'
     const typeViaggioTreno = type === 'departure' ? 'partenze' : 'arrivi'
 
-    const id = request.param('id')
+    const id = lefrecceStationCode ?? request.param('id')
     let date = new Date()
     date.setSeconds(0)
 
@@ -37,5 +38,23 @@ export default class ViaggioTrenoStationController {
       total: trains.length,
       trains,
     })
+  }
+
+  public async dump() {
+    return await Database.from('stations').select('*')
+  }
+
+  public async statusLeFrecce({ request, response }) {
+    const id = request.param('id')
+
+    // Get viaggiotreno station code from database
+    const station = await Database.from('stations')
+      .select('viaggiotreno_station_code')
+      .where('lefrecce_station_code', id)
+      .first()
+
+    const stationCode = station?.viaggiotreno_station_code ?? 'S' + id.slice(-5)
+
+    return this.status({ request, response, lefrecceStationCode: stationCode })
   }
 }
