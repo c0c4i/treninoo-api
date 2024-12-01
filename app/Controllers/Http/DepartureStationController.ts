@@ -18,7 +18,7 @@ export default class DepartureStationController {
       stations.push(Station.fromDeparture(line))
     })
 
-    const is_italo = stations.length === 0 ? await checkItaloTrainCode(id) : false
+    const is_italo = await checkItaloTrainCode(id)
 
     response.send({
       url: url,
