@@ -9,6 +9,8 @@ class StationTrain {
   // TEMP FIX: delay renamed to ritardo to fix JSON parse in app
   ritardo: string
   brand?: string
+  isCancelled?: boolean
+  haveWarning?: boolean
 
   constructor({
     trainCode,
@@ -19,6 +21,8 @@ class StationTrain {
     plannedPlatform,
     actualPlatform,
     delay,
+    isCancelled,
+    haveWarning,
   }) {
     this.trainCode = trainCode
     this.departureCode = departureCode
@@ -28,6 +32,8 @@ class StationTrain {
     this.plannedPlatform = plannedPlatform
     this.actualPlatform = actualPlatform
     this.ritardo = delay
+    this.isCancelled = isCancelled
+    this.haveWarning = haveWarning
   }
 
   static fromJson(json: any): StationTrain {
@@ -42,6 +48,8 @@ class StationTrain {
       actualPlatform:
         json.binarioEffettivoArrivoDescrizione ?? json.binarioEffettivoPartenzaDescrizione,
       delay: json.ritardo,
+      isCancelled: json.provvedimento === 1,
+      haveWarning: json.provvedimento === 2,
     })
   }
 }
