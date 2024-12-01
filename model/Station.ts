@@ -28,6 +28,12 @@ class Station {
     const stationName = body.displayName
     return new Station(stationCode, stationName)
   }
+
+  static fromSolutions(body) {
+    const stationCode = body.stationCode
+    const stationName = body.stationName
+    return new Station(stationCode, stationName)
+  }
 }
 
 export { Station }

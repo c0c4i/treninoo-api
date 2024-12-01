@@ -1,6 +1,8 @@
 import GetSolutionValidator from 'App/Validators/GetSolutionValidator'
 import axios from 'axios'
 import { Solution } from '../../../model/Solution'
+import { Station } from '../../../model/Station'
+import { findStationByName } from '../../../utils/station'
 
 export default class LeFrecceGetSolutionsController {
   public async index({ request, response }) {
@@ -32,7 +34,23 @@ export default class LeFrecceGetSolutionsController {
 
       const solutions: Solution[] = []
 
+      const stationsMap = new Map<string, Station>()
       for (const solution of data.solutions) {
+        for (const node of solution.solution.nodes) {
+          if (!stationsMap.has(node.origin)) {
+            const origin = await findStationByName(node.origin)
+            if (origin) stationsMap.set(node.origin, origin!)
+          }
+
+          if (!stationsMap.has(node.destination)) {
+            const destination = await findStationByName(node.destination)
+            if (destination) stationsMap.set(node.destination, destination!)
+          }
+
+          node.originStation = stationsMap.get(node.origin)
+          node.destinationStation = stationsMap.get(node.destination)
+        }
+
         solutions.push(Solution.fromLeFrecce(solution))
       }
 
