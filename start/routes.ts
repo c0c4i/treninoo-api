@@ -41,3 +41,5 @@ Route.get('/lefrecce/stations/:id/arrival', 'ViaggioTrenoStationController.statu
 Route.get('/lefrecce/stations/:id/departure', 'ViaggioTrenoStationController.statusLeFrecce')
 
 Route.get('/stations/dump', 'ViaggioTrenoStationController.dump')
+
+Route.get('/news', 'NewsController.index')
