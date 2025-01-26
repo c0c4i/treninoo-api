@@ -1,4 +1,5 @@
 import { timeToMilliseconds } from '../utils/time'
+import { getStatus, Status } from '../model/enum/Status'
 import { Station } from './Station'
 import { Stop } from './Stop'
 
@@ -19,6 +20,8 @@ class TrainStatus {
   }
 
   static fromJson(json: any) {
+    const status = getStatus(json.provvedimento, json.tipoTreno)
+
     return new TrainStatus({
       trainType: this._parseCategory(json.compNumeroTreno),
       trainCode: json.numeroTreno,
@@ -28,6 +31,8 @@ class TrainStatus {
       departureStation: new Station(json.idOrigine, json.origine),
       arrivalStationName: json.destinazione,
       firstDepartureTime: json.compOrarioPartenzaZero,
+      status,
+      warning: status === Status.PARTIALLY_SUPPRESSED ? json.subTitle : null,
     })
   }
 

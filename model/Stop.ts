@@ -46,6 +46,7 @@ class Stop {
       plannedArrivalRail: json.fermata.binarioProgrammatoArrivoDescrizione,
       actualArrivalRail: json.fermata.binarioEffettivoArrivoDescrizione,
       currentStation: json.stazioneCorrente ?? false,
+      suppressed: json.fermata.actualFermataType === 3,
     })
   }
 
