@@ -22,8 +22,19 @@ export default class NewsController {
       newsContainer.find('li').each((_, element) => {
         const title = $(element).find('a').first().text().trim() // Extract the title from the first <a> tag
         const dateText = $(element).find('div > div > div > h4').text().trim() // Extract the date
-        const date = dateText ? dateText : null // Assign null if date is empty
+        let date = dateText ? dateText : null // Assign null if date is empty
         const content = $(element).find('div > div > div > div').html()?.trim() || '' // Extract the raw HTML content
+
+        // Convert to date type
+        if (date) {
+          const dateParts = date.split('.')
+          const formattedDate = new Date(
+            parseInt(dateParts[2], 10),
+            parseInt(dateParts[1], 10) - 1,
+            parseInt(dateParts[0], 10)
+          ).toISOString()
+          date = formattedDate
+        }
 
         // Push the news item if title and content exist
         if (title && content) {
