@@ -27,6 +27,26 @@ class Stop {
   }
 
   static fromJson(json: any, delay: number) {
+    const suppressed = json.fermata.actualFermataType === 3
+
+    if (suppressed) {
+      return new Stop({
+        station: new Station(json.id, json.stazione),
+        plannedDepartureTime: null,
+        predictedDepartureTime: null,
+        actualDepartureTime: null,
+        plannedArrivalTime: null,
+        predictedArrivalTime: null,
+        actualArrivalTime: null,
+        plannedDepartureRail: null,
+        actualDepartureRail: null,
+        plannedArrivalRail: null,
+        actualArrivalRail: null,
+        currentStation: false,
+        suppressed: suppressed,
+      })
+    }
+
     const plannedDepartureTime = json.fermata.partenza_teorica
     const plannedArrivalTime = json.fermata.arrivo_teorico
 
