@@ -4,49 +4,50 @@ import * as cheerio from 'cheerio'
 export default class NewsController {
   public async index({ response }) {
     try {
-      // Fetch the HTML content from the Trenitalia page
-      const { data: html } = await axios.get(
-        'https://www.trenitalia.com/it/informazioni/Infomobilita/notizie-infomobilita.html'
+      // Fetch "Notizie Infomobilità" news from the official website
+      const newsInfomobilita = await this.fetchNews(
+        'http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/infomobilitaRSS/false'
       )
 
-      // Load the HTML into Cheerio
-      const $ = cheerio.load(html)
+      // Fetch "Modifiche Programmate" news from the official website
+      const newsModificheProgrammate = await this.fetchNews(
+        'http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/infomobilitaRSS/true'
+      )
 
-      // Define the selector for the main news container
-      const newsContainer = $('#accordionGenericInfomob')
-
-      // Prepare the array to store news items
-      const newsItems: { title: string; date: string | null; content: string }[] = []
-
-      // Iterate over each <li> inside the container
-      newsContainer.find('li').each((_, element) => {
-        const title = $(element).find('a').first().text().trim() // Extract the title from the first <a> tag
-        const dateText = $(element).find('div > div > div > h4').text().trim() // Extract the date
-        let date = dateText ? dateText : null // Assign null if date is empty
-        const content = $(element).find('div > div > div > div').html()?.trim() || '' // Extract the raw HTML content
-
-        // Convert to date type
-        if (date) {
-          const dateParts = date.split('.')
-          const formattedDate = new Date(
-            parseInt(dateParts[2], 10),
-            parseInt(dateParts[1], 10) - 1,
-            parseInt(dateParts[0], 10)
-          ).toISOString()
-          date = formattedDate
-        }
-
-        // Push the news item if title and content exist
-        if (title && content) {
-          newsItems.push({ title, date, content })
-        }
-      })
-
-      // Return the scraped news items as JSON
-      return response.json(newsItems)
+      return response.json({ newsInfomobilita, newsModificheProgrammate })
     } catch (error) {
       console.error('Error fetching or parsing data:', error)
       return response.status(500).json({ message: 'Failed to fetch news' })
     }
+  }
+
+  private async fetchNews(url: string) {
+    const { data: html } = await axios.get(url)
+    const $ = cheerio.load(html)
+    const newsContainer = $('#accordionGenericInfomob')
+    const newsItems: { title: string; date: string | null; content: string }[] = []
+
+    newsContainer.find('li').each((_, element) => {
+      const title = $(element).find('a').first().text().trim()
+      const dateText = $(element).find('div > div > div > h4').text().trim()
+      let date = dateText ? dateText : null
+      const content = $(element).find('div > div > div > div').html()?.trim() || ''
+
+      if (date) {
+        const dateParts = date.split('.')
+        const formattedDate = new Date(
+          parseInt(dateParts[2], 10),
+          parseInt(dateParts[1], 10) - 1,
+          parseInt(dateParts[0], 10)
+        ).toISOString()
+        date = formattedDate
+      }
+
+      if (title && content) {
+        newsItems.push({ title, date, content })
+      }
+    })
+
+    return newsItems
   }
 }
