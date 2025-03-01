@@ -20,16 +20,7 @@ export default class LeFrecceStationController {
         .select('priority')
         .where('lefrecce_station_code', s.stationCode)
 
-      if (result.length > 0) {
-        s.priority = result[0].priority
-      } else {
-        // Try with generated code
-        const stationCode = `S${s.stationCode.toString().slice(-5)}`
-        const result = await Database.from('stations')
-          .select('priority')
-          .where('viaggiotreno_station_code', stationCode)
-        if (result.length > 0) s.priority = result[0].priority
-      }
+      if (result.length > 0) s.priority = result[0].priority
 
       stations.push(s)
     }
