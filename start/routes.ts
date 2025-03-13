@@ -29,8 +29,8 @@ Route.get('/italo/:trainCode', 'ItaloController.details')
 Route.post('/feedback', 'FeedbacksController.create')
 Route.post('/email', 'EmailController.receive')
 
-Route.get('/rfi/autocomplete/:word', 'RfiStationController.autocomplete')
-Route.get('/rfi/station/:type/:stationCode', 'RfiStationController.status')
+// Route.get('/rfi/autocomplete/:word', 'RfiStationController.autocomplete')
+// Route.get('/rfi/station/:type/:stationCode', 'RfiStationController.status')
 Route.get('/lefrecce/autocomplete/:word', 'LeFrecceStationController.autocomplete')
 Route.get('/lefrecce/solutions', 'LeFrecceGetSolutionsController.index')
 
