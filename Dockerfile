@@ -16,7 +16,7 @@ RUN cp package*.json ./build
 RUN cd build && npm ci --omit=dev
 
 # Build final runtime container
-FROM node:16-alpine
+FROM node:21-alpine
 # Set environment variables
 ENV NODE_ENV=production
 
