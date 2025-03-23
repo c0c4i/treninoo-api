@@ -102,6 +102,18 @@ class Stop {
       currentStation: json.LocationCode === currentStation,
     })
   }
+
+  static fromItaloScheduleJson(json: any) {
+    const plannedDepartureTime = timeToMilliseconds(json.EstimatedDepartureTime)
+    const plannedArrivalTime = timeToMilliseconds(json.EstimatedArrivalTime)
+
+    return new Stop({
+      station: new Station(json.RfiLocationCode, json.LocationDescription),
+      plannedDepartureTime,
+      plannedArrivalTime,
+      currentStation: false,
+    })
+  }
 }
 
 export { Stop }

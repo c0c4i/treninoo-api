@@ -98,6 +98,46 @@ class TrainStatus {
       stops,
     })
   }
+
+  static fromItaloScheduleJson(json: any) {
+    const stops: Stop[] = []
+
+    for (const stop of json.Stations) {
+      if (stop.RfiLocationCode === null) continue
+      const s = Stop.fromItaloScheduleJson(stop)
+      stops.push(s)
+    }
+
+    return new TrainStatus({
+      trainType: 'Italo',
+      trainCode: json.TrainNumber,
+      departureStation: new Station('italo', json.DepartureStationDescription),
+      arrivalStationName: json.ArrivalStationDescription,
+      firstDepartureTime: json.DepartureDate,
+      lastDetectionStation: '--',
+      delay: 0,
+      stops,
+    })
+  }
+
+  static fromRedisJson(json: any) {
+    const stops: Stop[] = []
+    for (const stop of json.stops) {
+      stops.push(new Stop(stop))
+    }
+
+    return new TrainStatus({
+      trainType: json.trainType,
+      trainCode: json.trainCode,
+      lastDetectionTime: json.lastDetectionTime,
+      lastDetectionStation: json.lastDetectionStation,
+      departureStation: Station.fromRedisJson(json.departureStation),
+      arrivalStationName: json.arrivalStationName,
+      delay: json.delay,
+      firstDepartureTime: json.firstDepartureTime,
+      stops,
+    })
+  }
 }
 
 export { TrainStatus }

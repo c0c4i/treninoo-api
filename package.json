@@ -34,6 +34,7 @@
     "@adonisjs/core": "^5.9.0",
     "@adonisjs/lucid": "^18.4.0",
     "@adonisjs/mail": "^8.1.2",
+    "@adonisjs/redis": "^7.3.4",
     "@adonisjs/repl": "^3.1.0",
     "axios": "^1.4.0",
     "cheerio": "^1.0.0",
