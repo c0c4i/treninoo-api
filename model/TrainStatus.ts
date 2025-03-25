@@ -13,6 +13,7 @@ class TrainStatus {
   delay: number
   firstDepartureTime: string
   stops: Stop[]
+  isCached: boolean = false
 
   // Costructor with Object.assign
   constructor(json: any) {
@@ -136,6 +137,7 @@ class TrainStatus {
       delay: json.delay,
       firstDepartureTime: json.firstDepartureTime,
       stops,
+      isCached: true,
     })
   }
 }
