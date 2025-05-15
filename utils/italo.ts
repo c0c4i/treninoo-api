@@ -1,13 +1,18 @@
 import axios from 'axios'
 import Env from '@ioc:Adonis/Core/Env'
+import Redis from '@ioc:Adonis/Addons/Redis'
 
 export { checkItaloTrainCode }
 
 async function checkItaloTrainCode(trainCode: string): Promise<boolean> {
   const url = Env.get('ITALO_BASE_URL') + `/RicercaTrenoService`
 
-  return await axios
-    .get(url, { params: { TrainNumber: trainCode } })
-    .then((response) => !response.data.IsEmpty)
-    .catch((_) => false)
+  const response = await axios.get(url, { params: { TrainNumber: trainCode } })
+
+  if (!response.data.IsEmpty) return true
+
+  // Check if there is cache for this train
+  const cached = await Redis.get(`italo:train:${trainCode}`)
+
+  return !!cached
 }

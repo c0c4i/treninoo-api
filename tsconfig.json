@@ -29,7 +29,8 @@
       "@adonisjs/core",
       "@adonisjs/repl",
       "@adonisjs/mail",
-      "@adonisjs/lucid"
+      "@adonisjs/lucid",
+      "@adonisjs/redis"
     ]
   }
 }

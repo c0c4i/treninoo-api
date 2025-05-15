@@ -34,6 +34,10 @@ class Station {
     const stationName = body.stationName
     return new Station(stationCode, stationName)
   }
+
+  static fromRedisJson(json: any) {
+    return new Station(json.stationCode, json.stationName, json.departureDate)
+  }
 }
 
 export { Station }

@@ -2,6 +2,7 @@ import Env from '@ioc:Adonis/Core/Env'
 import axios from 'axios'
 // import { TrainStatus } from '../../../model/TrainStatus'
 import { TrainStatus } from '../../../model/TrainStatus'
+import Redis from '@ioc:Adonis/Addons/Redis'
 
 export default class ItalosController {
   public async details({ request, response }) {
@@ -16,9 +17,20 @@ export default class ItalosController {
       // If the train is not found, send 404 response
       // Or fermate field is an empty array
       if (data['IsEmpty']) {
-        return response.status(404).send({
+        // Check if there is cache for this train
+        const cached = await Redis.get(`italo:train:${trainCode}`)
+
+        if (!cached) {
+          return response.status(404).send({
+            url: url,
+            status: null,
+          })
+        }
+
+        const status = TrainStatus.fromRedisJson(JSON.parse(cached))
+        return response.send({
           url: url,
-          status: null,
+          status,
         })
       }
 
@@ -49,5 +61,35 @@ export default class ItalosController {
         url: url,
       })
     }
+  }
+
+  // Method to cache moving Italo trains
+  public async refreshCurrentTrains({ response }) {
+    // Get current moving trains
+    const url = Env.get('ITALO_BASE_URL') + `/TreniInCircolazioneService`
+    const { data } = await axios.get(url)
+
+    // If there are no trains moving, skip the cache refresh
+    if (data['IsEmpty']) return response.status(204).send()
+
+    for (const train of data['TrainSchedules']) {
+      try {
+        const status = TrainStatus.fromItaloScheduleJson(train)
+        await Redis.set(
+          `italo:train:${status.trainCode}`,
+          JSON.stringify(status),
+          'EX',
+          60 * 60 * 24 * 7 // 1 week
+        )
+      } catch (error) {
+        console.log(error)
+        continue
+      }
+    }
+
+    response.send({
+      url: url,
+      success: true,
+    })
   }
 }
