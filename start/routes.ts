@@ -43,5 +43,5 @@ Route.get('/stations/dump', 'ViaggioTrenoStationController.dump')
 
 Route.get('/news', 'NewsController.index')
 
-Route.get('/italo/cache', 'ItaloController.refreshCurrentTrains')
+Route.get('/italo/cache', 'ItaloController.refreshCurrentTrains').middleware('internal')
 Route.get('/italo/:trainCode', 'ItaloController.details')
