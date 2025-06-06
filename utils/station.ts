@@ -7,7 +7,7 @@ export { findStationByName }
 async function findStationByName(stationName: string): Promise<Station | undefined> {
   const result = await Database.from('stations')
     .select('viaggiotreno_station_code')
-    .where('lefrecce_name', stationName)
+    .whereRaw('LOWER(lefrecce_name) = ?', [stationName.toLowerCase()])
 
   if (result.length === 0) return undefined
 
