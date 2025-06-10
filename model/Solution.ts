@@ -6,19 +6,22 @@ class Solution {
   departureTime: string
   arrivalTime: string
   trains: SolutionTrain[]
+  price?: number
 
   constructor(
     origin: string,
     destination: string,
     departureTime: string,
     arrivalTime: string,
-    trains: SolutionTrain[]
+    trains: SolutionTrain[],
+    price?: number
   ) {
     ;(this.origin = origin),
       (this.destination = destination),
       (this.departureTime = departureTime),
       (this.arrivalTime = arrivalTime),
-      (this.trains = trains)
+      (this.trains = trains),
+      (this.price = price)
   }
 
   static fromLeFrecce(body) {
@@ -28,7 +31,8 @@ class Solution {
     const departureTime = body.departureTime.slice(0, -6)
     const arrivalTime = body.arrivalTime.slice(0, -6)
     const trains = body.nodes.map((train) => SolutionTrain.fromLeFrecce(train))
-    return new Solution(origin, destination, departureTime, arrivalTime, trains)
+    const price = body.price ? body.price.amount : undefined
+    return new Solution(origin, destination, departureTime, arrivalTime, trains, price)
   }
 }
 
