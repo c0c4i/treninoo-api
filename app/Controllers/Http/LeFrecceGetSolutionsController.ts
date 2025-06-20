@@ -21,7 +21,7 @@ export default class LeFrecceGetSolutionsController {
           frecceOnly: payload.onlyFrecce ?? false,
           regionalOnly: payload.onlyRegional ?? false,
           intercityOnly: payload.onlyIntercity ?? false,
-          noChanges: false,
+          noChanges: payload.noChanges ?? false,
           order: 'DEPARTURE_DATE',
           offset: payload.offset ?? 0,
           limit: 10,

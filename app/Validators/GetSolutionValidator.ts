@@ -14,6 +14,7 @@ export default class GetSolutionValidator {
     onlyRegional: schema.boolean.optional(),
     onlyIntercity: schema.boolean.optional(),
     offset: schema.number.optional(),
+    noChanges: schema.boolean.optional(),
   })
 
   public messages: CustomMessages = {}
