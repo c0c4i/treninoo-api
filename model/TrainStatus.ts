@@ -85,6 +85,18 @@ class TrainStatus {
       stops.push(s)
     }
 
+    if (stops.length > 0) {
+      // Remove arrival time from first stop
+      stops[0].plannedArrivalTime = undefined
+      stops[0].predictedArrivalTime = undefined
+      stops[0].actualArrivalTime = undefined
+
+      // Remove departure time from last stop
+      stops[stops.length - 1].plannedDepartureTime = undefined
+      stops[stops.length - 1].predictedDepartureTime = undefined
+      stops[stops.length - 1].actualDepartureTime = undefined
+    }
+
     return new TrainStatus({
       trainType: 'Italo',
       trainCode: json.TrainSchedule.TrainNumber,
@@ -107,6 +119,18 @@ class TrainStatus {
       if (stop.RfiLocationCode === null) continue
       const s = Stop.fromItaloScheduleJson(stop)
       stops.push(s)
+    }
+
+    if (stops.length > 0) {
+      // Remove arrival time from first stop
+      stops[0].plannedArrivalTime = undefined
+      stops[0].predictedArrivalTime = undefined
+      stops[0].actualArrivalTime = undefined
+
+      // Remove departure time from last stop
+      stops[stops.length - 1].plannedDepartureTime = undefined
+      stops[stops.length - 1].predictedDepartureTime = undefined
+      stops[stops.length - 1].actualDepartureTime = undefined
     }
 
     return new TrainStatus({
