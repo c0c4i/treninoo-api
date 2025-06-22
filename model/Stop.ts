@@ -1,5 +1,6 @@
 import { timeToMilliseconds } from '../utils/time'
 import { Station } from './Station'
+import { normalizeRoman } from '../utils/roman'
 
 class Stop {
   station: Station
@@ -61,10 +62,10 @@ class Stop {
       plannedArrivalTime,
       predictedArrivalTime,
       actualArrivalTime: json.fermata.arrivoReale,
-      plannedDepartureRail: json.fermata.binarioProgrammatoPartenzaDescrizione,
-      actualDepartureRail: json.fermata.binarioEffettivoPartenzaDescrizione,
-      plannedArrivalRail: json.fermata.binarioProgrammatoArrivoDescrizione,
-      actualArrivalRail: json.fermata.binarioEffettivoArrivoDescrizione,
+      plannedDepartureRail: normalizeRoman(json.fermata.binarioProgrammatoPartenzaDescrizione),
+      actualDepartureRail: normalizeRoman(json.fermata.binarioEffettivoPartenzaDescrizione),
+      plannedArrivalRail: normalizeRoman(json.fermata.binarioProgrammatoArrivoDescrizione),
+      actualArrivalRail: normalizeRoman(json.fermata.binarioEffettivoArrivoDescrizione),
       currentStation: json.stazioneCorrente ?? false,
       suppressed: json.fermata.actualFermataType === 3,
     })
