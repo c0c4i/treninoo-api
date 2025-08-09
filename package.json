@@ -42,6 +42,7 @@
     "pg": "^8.11.3",
     "proxy-addr": "^2.0.7",
     "reflect-metadata": "^0.1.13",
-    "source-map-support": "^0.5.20"
+    "source-map-support": "^0.5.20",
+    "xml2js": "^0.6.2"
   }
 }

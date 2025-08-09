@@ -1,5 +1,7 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
+import { Strike } from '../../../model/Strike'
+import { parseStringPromise } from 'xml2js'
 
 export default class NewsController {
   public async index({ response }) {
@@ -14,7 +16,15 @@ export default class NewsController {
         'http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/infomobilitaRSS/true'
       )
 
-      return response.json({ newsInfomobilita, newsModificheProgrammate })
+      // Fetch strikes from the official RSS feed
+      let strikes: Strike[] = []
+      try {
+        strikes = await this.fetchStrikes()
+      } catch (error) {
+        console.error('Error fetching strikes:', error)
+      }
+
+      return response.json({ newsInfomobilita, newsModificheProgrammate, strikes })
     } catch (error) {
       console.error('Error fetching or parsing data:', error)
       return response.status(500).json({ message: 'Failed to fetch news' })
@@ -49,5 +59,62 @@ export default class NewsController {
     })
 
     return newsItems
+  }
+
+  private async fetchStrikes(): Promise<Strike[]> {
+    const response = await axios.get('https://scioperi.mit.gov.it/mit2/public/scioperi/rss')
+    const xml = response.data
+
+    const parsed = await parseStringPromise(xml, {
+      trim: true,
+      explicitArray: false,
+      mergeAttrs: true,
+    })
+
+    const items = parsed.rss.channel.item
+    const strikes: Strike[] = []
+
+    for (const item of Array.isArray(items) ? items : [items]) {
+      const title = item.title
+      const description = item.description
+      const pubDate = new Date(item.pubDate).toISOString().slice(0, 10)
+
+      const data = {
+        pub_date: pubDate,
+      }
+
+      // Extract from title
+      title.split(' - ').forEach((part) => {
+        const [key, ...rest] = part.split(':')
+        const value = rest.join(':').trim()
+        if (key && value) {
+          const k = key.toLowerCase().replace(/\s+/g, '_')
+          data[k] = value
+        }
+      })
+
+      // Extract from description (HTML with <br/>)
+      const descParts = description
+        .replace('<![CDATA[', '')
+        .replace(']]>', '')
+        .split(/<br\s*\/?>/i)
+
+      for (const part of descParts) {
+        const [key, ...rest] = part.split(':')
+        const value = rest.join(':').trim()
+        if (key && value) {
+          const k = key.toLowerCase().replace(/\s+/g, '_')
+          data[k] = value
+        }
+      }
+
+      if (data['settore'] != 'Ferroviario') continue
+
+      const strike = Strike.fromFeed(data)
+
+      strikes.push(strike)
+    }
+
+    return strikes
   }
 }
