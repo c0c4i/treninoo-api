@@ -4,7 +4,7 @@ function _isRoman(str) {
 }
 
 // Converts Roman numeral to integer
-function _romanToInt(roman) {
+function _romanToInt(roman): string {
   const map = {
     I: 1,
     V: 5,
@@ -30,7 +30,7 @@ function _romanToInt(roman) {
 
   console.log('Converted Roman numeral:', roman, 'to integer:', result)
 
-  return result
+  return result.toString()
 }
 
 // Normalize a value: if Roman numeral, convert to integer
