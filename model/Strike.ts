@@ -1,31 +1,25 @@
 class Strike {
-  id: string
   startDate: string
   endDate: string
   description: string
-  mode: string
   category: string
   where: string
 
-  constructor({ id, startDate, endDate, description, mode, category, where }) {
-    this.id = id
+  constructor({ startDate, endDate, description, category, where }) {
     this.startDate = startDate
     this.endDate = endDate
     this.description = description
-    this.mode = mode
     this.category = category
     this.where = where
   }
 
   static fromFeed(body) {
     return new Strike({
-      id: 1,
-      startDate: body['data_inizio'],
-      endDate: body['data_fine'],
-      description: body.description,
-      mode: body['modalità'],
+      startDate: body['data_inizio'].split('/').reverse().join('-'),
+      endDate: body['data_fine'].split('/').reverse().join('-'),
       category: body['categoria_interessata'],
-      where: body['provincia'],
+      description: body['modalità'],
+      where: body['rilevanza'] === 'Nazionale' ? body['rilevanza'] : body['regione'],
     })
   }
 }
