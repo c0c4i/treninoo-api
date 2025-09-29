@@ -31,9 +31,9 @@ APP_KEY=
 DRIVE_DISK=local
 ```
 
-
-
-
+### Database
+Il progetto utilizza PostgreSQL come database. Puoi trovare il dump del database in ./stations.sql
+Per poter utilizzare il database è necessario creare un database PostgreSQL e importare il file `stations.sql`.
 
 ## Endpoints
 
@@ -196,4 +196,4 @@ Nessuno ma se volete aiutare siete i benvenuti, scrivetemi pure una [email](mail
 
 ## Copyright and License
 
-Copyright 2023 Samuele Besoli. Code released under the MIT license.
+Copyright 2025 Samuele Besoli. Code released under the MIT license.
