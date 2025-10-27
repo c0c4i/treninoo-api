@@ -14,6 +14,7 @@ class TrainStatus {
   firstDepartureTime: string
   stops: Stop[]
   isCached: boolean = false
+  orientation?: string
 
   // Costructor with Object.assign
   constructor(json: any) {
@@ -34,7 +35,17 @@ class TrainStatus {
       firstDepartureTime: json.compOrarioPartenzaZero,
       status,
       warning: status === Status.PARTIALLY_SUPPRESSED ? json.subTitle : null,
+      orientation: this._parseOrientation(json),
     })
+  }
+
+  private static _parseOrientation(json: any) {
+    if (Array.isArray(json.descOrientamento)) {
+      if (json.descOrientamento.length > 0) {
+        if (json.descOrientamento[0] != '--') return json.descOrientamento[0]
+      }
+    }
+    return null
   }
 
   private static _parseCategory(category: string) {
