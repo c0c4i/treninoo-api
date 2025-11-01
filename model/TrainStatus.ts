@@ -8,6 +8,7 @@ class TrainStatus {
   trainCode: string
   lastDetectionTime: string
   lastDetectionStation: string
+  isDeparted: boolean = false
   departureStation: Station
   arrivalStationName: string
   delay: number
@@ -23,12 +24,14 @@ class TrainStatus {
 
   static fromJson(json: any) {
     const status = getStatus(json.provvedimento, json.tipoTreno)
+    const isDeparted = json.lastPositionRegister != '--'
 
     return new TrainStatus({
       trainType: this._parseCategory(json.compNumeroTreno),
       trainCode: json.numeroTreno,
       lastDetectionTime: json.oraUltimoRilevamento,
       lastDetectionStation: json.stazioneUltimoRilevamento,
+      isDeparted,
       delay: json.ritardo ?? 0,
       departureStation: new Station(json.idOrigine, json.origine),
       arrivalStationName: json.destinazione,
@@ -117,6 +120,7 @@ class TrainStatus {
         'italo',
         json.TrainSchedule.StazionePartenza.LocationDescription
       ),
+      isDeparted: true,
       arrivalStationName: lastStation.LocationDescription,
       firstDepartureTime: json.TrainSchedule.DepartureDate,
       stops,
@@ -151,6 +155,7 @@ class TrainStatus {
       arrivalStationName: json.ArrivalStationDescription,
       firstDepartureTime: json.DepartureDate,
       lastDetectionStation: '--',
+      isDeparted: false,
       delay: 0,
       stops,
     })
