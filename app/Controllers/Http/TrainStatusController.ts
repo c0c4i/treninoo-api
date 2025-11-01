@@ -56,6 +56,7 @@ export default class TrainStatusController {
       const currentStationIndex = stops.findIndex((stop) => stop.currentStation)
 
       // Set confirmed true for all stops before current station
+      // TODO Handle case where no stations has currentStation = true
       for (let i = 0; i < currentStationIndex; i++) {
         stops[i].confirmed = true
       }
