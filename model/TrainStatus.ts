@@ -24,13 +24,17 @@ class TrainStatus {
 
   static fromJson(json: any) {
     const status = getStatus(json.provvedimento, json.tipoTreno)
-    const isDeparted = json.lastPositionRegister != '--'
+
+    // Determine if the train has departed
+    const lastDetectionStation = json.stazioneUltimoRilevamento
+    const lastDetectionTime = json.oraUltimoRilevamento
+    const isDeparted = lastDetectionStation !== '--' && lastDetectionTime
 
     return new TrainStatus({
       trainType: this._parseCategory(json.compNumeroTreno),
       trainCode: json.numeroTreno,
-      lastDetectionTime: json.oraUltimoRilevamento,
-      lastDetectionStation: json.stazioneUltimoRilevamento,
+      lastDetectionTime: lastDetectionTime,
+      lastDetectionStation: lastDetectionStation,
       isDeparted,
       delay: json.ritardo ?? 0,
       departureStation: new Station(json.idOrigine, json.origine),
