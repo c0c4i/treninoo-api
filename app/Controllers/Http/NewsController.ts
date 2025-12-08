@@ -108,7 +108,11 @@ export default class NewsController {
         }
       }
 
-      if (data['settore'] != 'Ferroviario') continue
+      if (data['settore'] != 'Ferroviario') {
+        if (data['modalità'].search(new RegExp('ferroviario', 'i')) == -1) {
+          continue
+        }
+      }
 
       const strike = Strike.fromFeed(data)
 
