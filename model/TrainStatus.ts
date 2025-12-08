@@ -28,7 +28,7 @@ class TrainStatus {
     // Determine if the train has departed
     const lastDetectionStation = json.stazioneUltimoRilevamento
     const lastDetectionTime = json.oraUltimoRilevamento
-    const isDeparted = lastDetectionStation !== '--' && lastDetectionTime != null
+    const isDeparted = lastDetectionTime != null
 
     return new TrainStatus({
       trainType: this._parseCategory(json.compNumeroTreno),
