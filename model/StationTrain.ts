@@ -1,3 +1,5 @@
+import { getWarning } from '../utils/Warning'
+
 class StationTrain {
   trainCode: string
   departureCode?: string
@@ -49,7 +51,7 @@ class StationTrain {
         json.binarioEffettivoArrivoDescrizione ?? json.binarioEffettivoPartenzaDescrizione,
       delay: json.ritardo,
       isCancelled: json.provvedimento === 1,
-      warning: json.subTitle,
+      warning: getWarning(json.compImgCambiNumerazione),
     })
   }
 }
