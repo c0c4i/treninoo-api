@@ -1,4 +1,4 @@
-import { getWarning } from '../utils/Warning'
+import { getWarning } from '../utils/warning'
 
 class StationTrain {
   trainCode: string
