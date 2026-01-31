@@ -34,6 +34,39 @@ class Solution {
     const price = body.price ? body.price.amount : undefined
     return new Solution(origin, destination, departureTime, arrivalTime, trains, price)
   }
+
+  static fromItalo(departureStation, arrivalStation, body) {
+    if (body.Segments.length === 0) return null
+    if (body.Segments.length > 1) {
+      console.warn(
+        '[Italo] Multiple segments found in Italo solution, only the first one will be processed.'
+      )
+    }
+
+    const rawTrain = body.Segments[0]
+
+    const trainCode = rawTrain.TrainNumber
+
+    const departureDate = new Date(parseInt(rawTrain.STD.match(/\/Date\((\d+)(?:[+-]\d+)?\)\//)[1]))
+    const arrivalDate = new Date(parseInt(rawTrain.STA.match(/\/Date\((\d+)(?:[+-]\d+)?\)\//)[1]))
+
+    return new Solution(
+      departureStation,
+      arrivalStation,
+      departureDate.toISOString(),
+      arrivalDate.toISOString(),
+      [
+        new SolutionTrain(
+          departureStation,
+          arrivalStation,
+          departureDate.toISOString(),
+          arrivalDate.toISOString(),
+          trainCode,
+          'Italo'
+        ),
+      ]
+    )
+  }
 }
 
 export { Solution }
