@@ -12,6 +12,7 @@ class StationTrain {
   ritardo: string
   brand?: string
   isCancelled: boolean
+  hasDelay?: boolean
   warning?: string
 
   constructor({
@@ -24,6 +25,7 @@ class StationTrain {
     actualPlatform,
     delay,
     isCancelled,
+    hasDelay,
     warning,
   }) {
     this.trainCode = trainCode
@@ -35,6 +37,7 @@ class StationTrain {
     this.actualPlatform = actualPlatform
     this.ritardo = delay
     this.isCancelled = isCancelled ?? false
+    this.hasDelay = hasDelay ?? false
     this.warning = warning
   }
 
@@ -51,6 +54,7 @@ class StationTrain {
         json.binarioEffettivoArrivoDescrizione ?? json.binarioEffettivoPartenzaDescrizione,
       delay: json.ritardo,
       isCancelled: json.provvedimento === 1,
+      hasDelay: !json.nonPartito,
       warning: getWarning(json.compImgCambiNumerazione),
     })
   }
