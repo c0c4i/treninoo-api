@@ -3,8 +3,11 @@
 import TrainAlertValidator from 'App/Validators/TrainAlertValidator'
 import Bitmap from '../../../utils/bitmap'
 import Database from '@ioc:Adonis/Lucid/Database'
+import TrainService from 'App/Services/TrainService'
 
 export default class TrainAlertsController {
+  private trainService = new TrainService()
+
   public async create({ request, response }) {
     const payload = await request.validate(TrainAlertValidator)
 
@@ -81,7 +84,7 @@ export default class TrainAlertsController {
           ta.origin_departure_time IS NULL
           OR (
             (CURRENT_DATE + ta.origin_departure_time)
-            BETWEEN NOW() AND NOW() + INTERVAL '1 hours'
+            BETWEEN NOW() AND NOW() + INTERVAL '2 hours'
           )
         )
       GROUP BY
@@ -94,11 +97,84 @@ export default class TrainAlertsController {
 
     const trainToRun = await Database.rawQuery(trainToRunQuery)
 
-    return trainToRun.rows
+    if (trainToRun.rows.length === 0) {
+      console.log('[TrainAlertsController] [prepareRun] No train to run')
+      return null
+    }
 
-    if (trainToRun.rows.length === 0) return
+    // Fetch train details from external API to get the stations and departure times
+    const departureDate = await this.trainService.getTodayDepartureDate(
+      trainToRun.rows[0].train_code,
+      trainToRun.rows[0].origin_station_code
+    )
 
-    return trainToRun.rows[0]
+    if (!departureDate) {
+      console.log('[TrainAlertsController] [prepareRun] No departure date found')
+      return null
+    }
+
+    try {
+      // 1. Create train run entry to lock the train alert for today
+      await Database.rawQuery(
+        `
+        UPDATE train_alerts
+        SET
+          autocomplete_checked_date = CURRENT_DATE,
+          last_autocomplete_check_at = NOW()
+        WHERE
+          train_code = ?
+          AND origin_station_code = ?;
+      `,
+        [trainToRun.rows[0].train_code, trainToRun.rows[0].origin_station_code]
+      )
+
+      // 2. Create train_runs for ALL alerts
+      await Database.rawQuery(
+        `
+        INSERT INTO train_runs (train_alert_id, departure_date, created_at)
+        SELECT
+          ta.id,
+          ?,
+          NOW()
+        FROM train_alerts ta
+        WHERE
+          ta.train_code = ?
+          AND ta.origin_station_code = ?
+          AND ta.enabled = true
+          AND (ta.days_of_week & (1 << ((EXTRACT(DOW FROM CURRENT_DATE)::int + 6) % 7))) > 0
+          AND NOT EXISTS (
+            SELECT 1
+            FROM train_runs tr
+            WHERE tr.train_alert_id = ta.id
+              AND tr.departure_date = ?
+          );
+      `,
+        [
+          new Date(departureDate),
+          trainToRun.rows[0].train_code,
+          trainToRun.rows[0].origin_station_code,
+          new Date(departureDate),
+        ]
+      )
+
+      return {
+        train_code: trainToRun.rows[0].train_code,
+        origin_station_code: trainToRun.rows[0].origin_station_code,
+        departure_date: new Date(departureDate),
+        alerts_count: trainToRun.rows[0].alerts_count,
+      }
+    } catch (error) {
+      // Catch error for unique constraint violation (duplicate train run)
+      if (error.code === '23505') {
+        console.log(
+          '[TrainAlertsController] [prepareRun] Train run already exists for this train alert and departure date'
+        )
+        return null
+      }
+
+      console.error('[TrainAlertsController] [prepareRun] Error creating train run:', error.message)
+      return null
+    }
   }
 
   public async sendNotifications() {
