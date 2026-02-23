@@ -3,34 +3,48 @@ import axios from 'axios'
 import { Solution } from '../../../model/Solution'
 import { Station } from '../../../model/Station'
 import { findStationByName } from '../../../utils/station'
+import LeFrecceService from 'App/Services/LeFrecceService'
 
 export default class LeFrecceGetSolutionsController {
+  private leFrecceService = new LeFrecceService()
+
   public async index({ request, response }) {
     const payload = await request.validate(GetSolutionValidator)
 
     const url = `https://www.lefrecce.it/Channels.Website.BFF.WEB/website/ticket/solutions`
 
     try {
-      const { data: data } = await axios.post(url, {
-        departureLocationId: payload.departureStation,
-        arrivalLocationId: payload.arrivalStation,
-        departureTime: payload.date.toString().slice(0, -6),
-        adults: 1,
-        children: 0,
-        criteria: {
-          frecceOnly: payload.onlyFrecce ?? false,
-          regionalOnly: payload.onlyRegional ?? false,
-          intercityOnly: payload.onlyIntercity ?? false,
-          noChanges: payload.noChanges ?? false,
-          order: 'DEPARTURE_DATE',
-          offset: payload.offset ?? 0,
-          limit: 10,
+      const { token, cookie } = await this.leFrecceService.getToken()
+
+      const { data: data } = await axios.post(
+        url,
+        {
+          departureLocationId: payload.departureStation,
+          arrivalLocationId: payload.arrivalStation,
+          departureTime: payload.date.toString().slice(0, -6),
+          adults: 1,
+          children: 0,
+          criteria: {
+            frecceOnly: payload.onlyFrecce ?? false,
+            regionalOnly: payload.onlyRegional ?? false,
+            intercityOnly: payload.onlyIntercity ?? false,
+            noChanges: payload.noChanges ?? false,
+            order: 'DEPARTURE_DATE',
+            offset: payload.offset ?? 0,
+            limit: 10,
+          },
+          advancedSearchRequest: {
+            bestFare: false,
+            bikeFilter: false,
+          },
         },
-        advancedSearchRequest: {
-          bestFare: false,
-          bikeFilter: false,
-        },
-      })
+        {
+          headers: {
+            'x-csrf-token': token,
+            cookie,
+          },
+        }
+      )
 
       const solutions: Solution[] = []
 
@@ -59,12 +73,14 @@ export default class LeFrecceGetSolutionsController {
         solutions,
       })
     } catch (error) {
-      if (error.response.status === 400) {
+      if (error?.response?.status === 400) {
         return response.send({
           total: 0,
           solutions: [],
         })
       }
+
+      console.error(error)
 
       response.status(500).send({
         message: 'Internal server error',
