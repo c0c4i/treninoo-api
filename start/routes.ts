@@ -45,3 +45,11 @@ Route.get('/news', 'NewsController.index')
 
 Route.get('/italo/cache', 'ItaloController.refreshCurrentTrains').middleware('internal')
 Route.get('/italo/:trainCode', 'ItaloController.details')
+
+Route.post('/devices/register', 'DevicesController.register')
+Route.post('/train-alerts', 'TrainAlertsController.create')
+Route.post('/train-alerts/prepare-run', 'TrainAlertsController.prepareRun').middleware('internal')
+Route.post(
+  '/train-alerts/send-notifications',
+  'TrainAlertsController.sendNotifications'
+).middleware('internal')

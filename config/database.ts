@@ -42,14 +42,20 @@ const databaseConfig: DatabaseConfig = {
         password: Env.get('PG_PASSWORD', ''),
         database: Env.get('PG_DB_NAME'),
       },
+      pool: {
+        afterCreate: (connection, callback) => {
+          connection.query("SET TIME ZONE 'Europe/Rome'", (err) => {
+            callback(err, connection)
+          })
+        },
+      },
       migrations: {
         naturalSort: true,
       },
       healthCheck: false,
       debug: false,
     },
-
-  }
+  },
 }
 
 export default databaseConfig
