@@ -19,7 +19,10 @@
 */
 
 import Route from '@ioc:Adonis/Core/Route'
+import Env from '@ioc:Adonis/Core/Env'
 
+const apiPrefix = Env.get('NODE_ENV') === 'development' ? '/test' : '/v1'
+console.log(`[BOOT] API Prefix set to: "${apiPrefix}"`)
 Route.get('/', 'DefaultController.index')
 Route.get('/departurestation/:id', 'DepartureStationController.find')
 Route.get('/autocomplete/:word', 'StationController.autocomplete')
@@ -43,5 +46,4 @@ Route.get('/stations/dump', 'ViaggioTrenoStationController.dump')
 
 Route.get('/news', 'NewsController.index')
 
-Route.get('/italo/cache', 'ItaloController.refreshCurrentTrains').middleware('internal')
-Route.get('/italo/:trainCode', 'ItaloController.details')
+}).prefix(apiPrefix)
