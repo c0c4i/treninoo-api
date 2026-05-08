@@ -101,6 +101,46 @@ La risposta è data nel seguente formato
 
 Questa chiamata è stata modificata rispetto alla chiamata originale perché viene fatto un mapping e ordinato per priorità, in questo modo se noi cerchiamo la parola `VER` non avremo come primo risultato `vErGiNeSe` (chissà dov'è questa stazione e se esiste) ma avremo giustamente `VERONA PORTA NUOVA`.
 
+#### Sincronizzazione stazioni
+
+```php
+GET /stations/sync?hash=CLIENT_HASH
+```
+
+Questa chiamata serve a capire se il client ha già l'ultima versione dei dati delle stazioni con coordinate.
+
+Il comportamento è molto semplice:
+
+1. Il client invia l'hash che ha salvato localmente nel parametro `hash`.
+2. Il server confronta questo valore con `stations_dump_hash`, salvato nella tabella `app_metadata`.
+3. Se gli hash coincidono, la risposta è:
+
+```json
+{
+    "status": "ok"
+}
+```
+
+4. Se l'hash manca oppure è diverso, il server risponde con i dati completi aggiornati:
+
+```json
+{
+    "status": "updated",
+    "hash": "sha256_del_dump_corrente",
+    "data": [
+        {
+            "stationCode": "S01700",
+            "stationName": "MILANO CENTRALE",
+            "lefrecceStationCode": "S01700",
+            "lat": 45.485,
+            "lng": 9.204
+        }, ...
+    ]
+}
+```
+
+L'hash viene generato dal dump delle stazioni che hanno coordinate geografiche, quindi cambia solo quando cambia il contenuto di quel dataset. In pratica il client può usare questa rotta per evitare di riscaricare i dati quando non sono cambiati.
+
 #### Stato treno
 
 ```php
