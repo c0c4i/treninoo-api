@@ -48,20 +48,30 @@ class Stop {
       })
     }
 
+    const actualDepartureTime = json.fermata.partenzaReale
+    const actualArrivalTime = json.fermata.arrivoReale
+
     const plannedDepartureTime = json.fermata.partenza_teorica
     const plannedArrivalTime = json.fermata.arrivo_teorico
 
-    const predictedDepartureTime = this._predictTime(plannedDepartureTime, delay, true)
-    const predictedArrivalTime = this._predictTime(plannedArrivalTime, delay)
+    let predictedDepartureTime
+    if (!actualDepartureTime) {
+      predictedDepartureTime = Stop._predictTime(plannedDepartureTime, delay, true)
+    }
+
+    let predictedArrivalTime
+    if (!actualArrivalTime && !actualDepartureTime) {
+      predictedArrivalTime = Stop._predictTime(plannedArrivalTime, delay)
+    }
 
     return new Stop({
       station: new Station(json.id, json.stazione),
       plannedDepartureTime,
       predictedDepartureTime,
-      actualDepartureTime: json.fermata.partenzaReale,
+      actualDepartureTime,
       plannedArrivalTime,
       predictedArrivalTime,
-      actualArrivalTime: json.fermata.arrivoReale,
+      actualArrivalTime,
       plannedDepartureRail: normalizeRoman(json.fermata.binarioProgrammatoPartenzaDescrizione),
       actualDepartureRail: normalizeRoman(json.fermata.binarioEffettivoPartenzaDescrizione),
       plannedArrivalRail: normalizeRoman(json.fermata.binarioProgrammatoArrivoDescrizione),
@@ -82,8 +92,8 @@ class Stop {
     const plannedDepartureTime = timeToMilliseconds(json.EstimatedDepartureTime)
     const plannedArrivalTime = timeToMilliseconds(json.EstimatedArrivalTime)
 
-    const predictedDepartureTime = this._predictTime(plannedDepartureTime!, delay, true)
-    const predictedArrivalTime = this._predictTime(plannedArrivalTime!, delay)
+    const predictedDepartureTime = Stop._predictTime(plannedDepartureTime!, delay, true)
+    const predictedArrivalTime = Stop._predictTime(plannedArrivalTime!, delay)
 
     const platform = json.ActualArrivalPlatform
 
