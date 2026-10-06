@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { vtGet, VT_TTL } from 'App/Services/ViaggiaTrenoClient'
 import { StationTrain } from '../../../model/StationTrain'
 import Env from '@ioc:Adonis/Core/Env'
 import Database from '@ioc:Adonis/Lucid/Database'
@@ -23,7 +23,7 @@ export default class ViaggioTrenoStationController {
     let url = Env.get('BASE_URL') + `/${typeViaggioTreno}/${id}/${date.toUTCString()}`
     url += '+0200'
     url = encodeURI(url)
-    const { data: data } = await axios.get(url)
+    const data = await vtGet(url, VT_TTL.realtime, `${typeViaggioTreno}/${id}`)
 
     if (!Array.isArray(data)) return response.status(404).send({ error: 'Not found' })
 

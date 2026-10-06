@@ -1,5 +1,5 @@
 import Env from '@ioc:Adonis/Core/Env'
-import axios from 'axios'
+import { vtGet, VT_TTL } from 'App/Services/ViaggiaTrenoClient'
 import { Station } from '../../../model/Station'
 import { checkItaloTrainCode } from '../../../utils/italo'
 
@@ -8,7 +8,7 @@ export default class DepartureStationController {
     const id = request.param('id')
     const url = Env.get('BASE_URL') + `/cercaNumeroTrenoTrenoAutocomplete/${id}`
 
-    const { data: data } = await axios.get(url)
+    const data = await vtGet(url, VT_TTL.trainSearch)
 
     const lines = data.split('\n')
     lines.splice(lines.length - 1, 1)

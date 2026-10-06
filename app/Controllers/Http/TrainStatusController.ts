@@ -1,5 +1,5 @@
 import Env from '@ioc:Adonis/Core/Env'
-import axios from 'axios'
+import { vtGet, VT_TTL, ViaggiaTrenoUnavailableException } from 'App/Services/ViaggiaTrenoClient'
 import { TrainStatus } from '../../../model/TrainStatus'
 import { Stop } from '../../../model/Stop'
 import ItalosController from './ItaloController'
@@ -22,7 +22,7 @@ export default class TrainStatusController {
       Env.get('BASE_URL') + `/tratteCanvas/${departureStation}/${trainCode}/${departureDate}`
 
     try {
-      const { data: data } = await axios.get(urlStatus)
+      const data = await vtGet(urlStatus, VT_TTL.realtime)
 
       // If the train is not found, send 404 response
       // Or fermate field is an empty array
@@ -33,7 +33,7 @@ export default class TrainStatusController {
         })
       }
 
-      const { data: dataStops } = await axios.get(urlStops)
+      const dataStops = await vtGet(urlStops, VT_TTL.realtime)
 
       if (dataStops === '') {
         return response.status(404).send({
@@ -74,6 +74,7 @@ export default class TrainStatusController {
         status,
       })
     } catch (error) {
+      if (error instanceof ViaggiaTrenoUnavailableException) throw error
       console.log(error)
       response.status(500).send({
         url: urlStatus,

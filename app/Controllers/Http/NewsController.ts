@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { vtGet, VT_TTL, ViaggiaTrenoUnavailableException } from 'App/Services/ViaggiaTrenoClient'
 import * as cheerio from 'cheerio'
 import { Strike } from '../../../model/Strike'
 import { parseStringPromise } from 'xml2js'
@@ -26,13 +27,14 @@ export default class NewsController {
 
       return response.json({ newsInfomobilita, newsModificheProgrammate, strikes })
     } catch (error) {
+      if (error instanceof ViaggiaTrenoUnavailableException) throw error
       console.error('Error fetching or parsing data:', error)
       return response.status(500).json({ message: 'Failed to fetch news' })
     }
   }
 
   private async fetchNews(url: string) {
-    const { data: html } = await axios.get(url)
+    const html = await vtGet(url, VT_TTL.news)
     const $ = cheerio.load(html)
     const newsContainer = $('#accordionGenericInfomob')
     const newsItems: { title: string; date: string | null; content: string }[] = []
