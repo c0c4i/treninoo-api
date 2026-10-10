@@ -67,8 +67,18 @@ export async function vtGet<T = any>(url: string, ttlMs: number, key = url): Pro
 }
 
 async function fetchUpstream(url: string, ttlMs: number, key: string) {
-  const res = await http.get(url)
-  Logger.info({ status: res.status, url }, 'viaggiatreno upstream')
+  const start = Date.now()
+  let res
+  try {
+    res = await http.get(url)
+  } catch (error) {
+    Logger.error(
+      { ms: Date.now() - start, url, err: error.message },
+      'viaggiatreno upstream failed'
+    )
+    throw error
+  }
+  Logger.info({ status: res.status, ms: Date.now() - start, url }, 'viaggiatreno upstream')
 
   if (res.status === 403 || res.status === 429) {
     pausedUntil = Date.now() + PAUSE_MS

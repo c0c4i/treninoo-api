@@ -1,0 +1,41 @@
+// Ships treninoo-api container logs to Grafana Cloud Loki.
+// Credentials come from the environment: GRAFANA_LOKI_URL, GRAFANA_LOKI_USER, GRAFANA_LOKI_TOKEN.
+
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+
+  // Docker's name filter is a substring match, so this also picks up treninoo-api-test;
+  // the `container` label tells them apart.
+  filter {
+    name   = "name"
+    values = ["treninoo-api"]
+  }
+}
+
+discovery.relabel "containers" {
+  targets = []
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+}
+
+loki.source.docker "containers" {
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.docker.containers.targets
+  relabel_rules = discovery.relabel.containers.rules
+  forward_to    = [loki.write.grafana_cloud.receiver]
+}
+
+loki.write "grafana_cloud" {
+  endpoint {
+    url = sys.env("GRAFANA_LOKI_URL")
+
+    basic_auth {
+      username = sys.env("GRAFANA_LOKI_USER")
+      password = sys.env("GRAFANA_LOKI_TOKEN")
+    }
+  }
+}
