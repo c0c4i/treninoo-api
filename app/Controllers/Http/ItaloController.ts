@@ -12,7 +12,10 @@ export default class ItalosController {
 
     try {
       // ?&TrainNumber=1233
-      const { data: data } = await axios.get(url, { params: { TrainNumber: trainCode } })
+      const { data: data } = await axios.get(url, {
+        params: { TrainNumber: trainCode },
+        timeout: 2000,
+      })
 
       // If the train is not found, send 404 response
       // Or fermate field is an empty array

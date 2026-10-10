@@ -8,7 +8,8 @@ async function checkItaloTrainCode(trainCode: string): Promise<boolean> {
   try {
     const url = Env.get('ITALO_BASE_URL') + `/RicercaTrenoService`
 
-    const response = await axios.get(url, { params: { TrainNumber: trainCode } })
+    // Italo answers in ~0.2-1.6s; without a cap a degraded gateway stalls every train search
+    const response = await axios.get(url, { params: { TrainNumber: trainCode }, timeout: 2000 })
 
     if (!response.data.IsEmpty) return true
 
