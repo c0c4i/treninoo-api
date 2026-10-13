@@ -3,22 +3,17 @@ import axios from 'axios'
 // import { TrainStatus } from '../../../model/TrainStatus'
 import { TrainStatus } from '../../../model/TrainStatus'
 import Redis from '@ioc:Adonis/Addons/Redis'
-import Logger from '@ioc:Adonis/Core/Logger'
+import { fetchItaloTrain } from '../../../utils/italo'
 
 export default class ItalosController {
   public async details({ request, response }) {
     const trainCode = request.param('trainCode')
 
     const url = Env.get('ITALO_BASE_URL') + `/RicercaTrenoService`
-    const start = Date.now()
 
     try {
-      // ?&TrainNumber=1233
-      const { data: data } = await axios.get(url, {
-        params: { TrainNumber: trainCode },
-        timeout: 2000,
-      })
-      Logger.info({ ms: Date.now() - start, trainCode }, 'italo upstream')
+      // The user is explicitly waiting on Italo here, so allow more time than the search check
+      const data = await fetchItaloTrain(trainCode, 6000)
 
       // If the train is not found, send 404 response
       // Or fermate field is an empty array
@@ -51,11 +46,8 @@ export default class ItalosController {
         url: url,
         status,
       })
-    } catch (error) {
-      Logger.error(
-        { ms: Date.now() - start, trainCode, err: error.message },
-        'italo upstream failed'
-      )
+    } catch {
+      // fetchItaloTrain already logs the real duration and outcome
       response.status(500).send({
         url: url,
       })
