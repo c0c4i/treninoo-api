@@ -4,9 +4,11 @@ import { Solution } from '../../../model/Solution'
 import { Station } from '../../../model/Station'
 import { findStationByName } from '../../../utils/station'
 import LeFrecceService from 'App/Services/LeFrecceService'
+import TrenitaliaAdapterService from 'App/Services/TrenitaliaAdapterService'
 
 export default class LeFrecceGetSolutionsController {
   private leFrecceService = new LeFrecceService()
+  private adapterService = new TrenitaliaAdapterService()
 
   public async index({ request, response }) {
     const payload = await request.validate(GetSolutionValidator)
@@ -14,6 +16,25 @@ export default class LeFrecceGetSolutionsController {
     const url = `https://www.lefrecce.it/Channels.Website.BFF.WEB/website/ticket/solutions`
 
     try {
+      if (this.adapterService.isEnabled()) {
+        const data = await this.adapterService.getSolutions({
+          departureStation: payload.departureStation,
+          arrivalStation: payload.arrivalStation,
+          date: payload.date.toString().slice(0, -6),
+          onlyFrecce: payload.onlyFrecce,
+          onlyRegional: payload.onlyRegional,
+          onlyIntercity: payload.onlyIntercity,
+          noChanges: payload.noChanges,
+          offset: payload.offset,
+          limit: 10, // match the LeFrecce path's page size (adapter defaults to 5)
+        })
+        const solutions = data.solutions.map((dto) => Solution.fromAdapter(dto))
+        return response.send({
+          total: solutions.length,
+          solutions,
+        })
+      }
+
       const { token, cookie } = await this.leFrecceService.getToken()
 
       const { data: data } = await axios.post(

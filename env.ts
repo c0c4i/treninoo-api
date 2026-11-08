@@ -30,4 +30,6 @@ export default Env.rules({
   REDIS_PORT: Env.schema.number(),
   REDIS_PASSWORD: Env.schema.string.optional(),
   VT_USER_AGENT: Env.schema.string.optional(),
+  ADAPTER_URL: Env.schema.string.optional(),
+  PRIVATE_KEY: Env.schema.string(),
 })

@@ -1,4 +1,5 @@
 import { Station } from './Station'
+import { SolutionTrainDTO } from '../contracts/adapter'
 
 class SolutionTrain {
   origin: string
@@ -30,7 +31,7 @@ class SolutionTrain {
       (this.destinationStation = destinationStation)
   }
 
-  static fromLeFrecce(body) {
+  static fromLeFrecce(body: any) {
     const origin = body.origin
     const destination = body.destination
     const departureTime = body.departureTime.slice(0, -6)
@@ -55,6 +56,24 @@ class SolutionTrain {
       arrivalTime,
       trainCode,
       category,
+      originStation,
+      destinationStation
+    )
+  }
+
+  static fromAdapter(dto: SolutionTrainDTO) {
+    const originStation = dto.originStation ? Station.fromAdapter(dto.originStation) : undefined
+    const destinationStation = dto.destinationStation
+      ? Station.fromAdapter(dto.destinationStation)
+      : undefined
+
+    return new SolutionTrain(
+      dto.origin,
+      dto.destination,
+      dto.departureTime,
+      dto.arrivalTime,
+      dto.trainCode,
+      dto.category ?? '',
       originStation,
       destinationStation
     )

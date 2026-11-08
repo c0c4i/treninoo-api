@@ -1,37 +1,55 @@
 import axios from 'axios'
 import { Station } from '../../../model/Station'
 import Database from '@ioc:Adonis/Lucid/Database'
+import TrenitaliaAdapterService from 'App/Services/TrenitaliaAdapterService'
 
 export default class LeFrecceStationController {
+  private adapterService = new TrenitaliaAdapterService()
+
   public async autocomplete({ request, response }) {
-    const id = request.param('word')
+    const word = request.param('word')
     const multistation = request.qs().multistation === 'true'
-    const url = `https://www.lefrecce.it/Channels.Website.BFF.WEB/website/locations/search?name=${id}&limit=100`
 
-    const { data: data } = await axios.get(url)
+    try {
+      let stations: Station[]
 
-    const stations: Station[] = []
-    for (const station of data) {
-      if (station.multistation && !multistation) continue
-      const s = Station.fromLeFrecce(station)
+      if (this.adapterService.isEnabled()) {
+        const dtos = await this.adapterService.autocomplete(word, multistation)
+        stations = dtos.map((dto) => Station.fromAdapter(dto))
+      } else {
+        const url = `https://www.lefrecce.it/Channels.Website.BFF.WEB/website/locations/search?name=${word}&limit=100`
+        const { data } = await axios.get(url)
+        stations = (data as any[])
+          .filter((s) => !s.multistation || multistation)
+          .map((s) => Station.fromLeFrecce(s))
+      }
 
-      // Get priority from database
-      const result = await Database.from('stations')
-        .select('priority')
-        .where('lefrecce_station_code', s.stationCode)
+      const rows = await Database.from('stations')
+        .select('lefrecce_station_code', 'priority')
+        .whereIn(
+          'lefrecce_station_code',
+          stations.map((s) => s.stationCode)
+        )
+      const priorities = new Map(rows.map((r) => [r.lefrecce_station_code, r.priority]))
+      for (const station of stations) {
+        // LeFrecce ids are numbers at runtime, the column is a string
+        const priority = priorities.get(String(station.stationCode))
+        if (priority !== undefined) station.priority = priority
+      }
 
-      if (result.length > 0) s.priority = result[0].priority
+      stations.sort((a, b) => a.priority - b.priority)
 
-      stations.push(s)
+      return response.send({
+        total: stations.length,
+        stations,
+      })
+    } catch (error) {
+      // Never forward error.message: it can contain the adapter's address
+      console.error(error)
+
+      return response.status(500).send({
+        message: 'Internal server error',
+      })
     }
-
-    // Sort by priority
-    stations.sort((station1: Station, station2: Station) => station1.priority - station2.priority)
-
-    response.send({
-      url: url,
-      total: stations.length,
-      stations: stations,
-    })
   }
 }

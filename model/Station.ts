@@ -1,3 +1,5 @@
+import type { StationDTO } from '../contracts/adapter'
+
 class Station {
   stationCode: string
   stationName: string
@@ -37,6 +39,10 @@ class Station {
 
   static fromRedisJson(json: any) {
     return new Station(json.stationCode, json.stationName, json.departureDate)
+  }
+
+  static fromAdapter(dto: StationDTO) {
+    return new Station(dto.stationCode, dto.stationName)
   }
 }
 
