@@ -21,9 +21,12 @@ export interface GetSolutionsParams {
 
 export default class TrenitaliaAdapterService {
   private baseUrl: string | undefined
+  private apiKey: string
 
   constructor() {
     this.baseUrl = Env.get('ADAPTER_URL')
+    // The adapter rejects any request without this key (x-api-key) with 401.
+    this.apiKey = Env.get('ADAPTER_API_KEY') ?? ''
   }
 
   public isEnabled(): boolean {
@@ -44,6 +47,7 @@ export default class TrenitaliaAdapterService {
       const { data } = await axios.get<T>(`${this.baseUrl}${path}`, {
         params,
         timeout: ADAPTER_TIMEOUT_MS,
+        headers: { 'x-api-key': this.apiKey },
       })
       return data
     } catch (error) {
