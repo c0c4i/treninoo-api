@@ -27,6 +27,8 @@ export interface SolutionDTO {
   price?: number
   // Whether the solution can be purchased. Optional for older adapter builds.
   saleable?: boolean
+  // LeFrecce white-label link pre-filled for this solution. Optional for older adapter builds.
+  buyUrl?: string
 }
 
 export interface PaginatedSolutionsDTO {

@@ -9,6 +9,7 @@ class Solution {
   trains: SolutionTrain[]
   price?: number
   saleable: boolean
+  buyUrl?: string
 
   constructor(
     origin: string | undefined,
@@ -17,7 +18,8 @@ class Solution {
     arrivalTime: string,
     trains: SolutionTrain[],
     price?: number,
-    saleable: boolean = false
+    saleable: boolean = false,
+    buyUrl?: string
   ) {
     ;(this.origin = origin),
       (this.destination = destination),
@@ -25,7 +27,8 @@ class Solution {
       (this.arrivalTime = arrivalTime),
       (this.trains = trains),
       (this.price = price),
-      (this.saleable = saleable)
+      (this.saleable = saleable),
+      (this.buyUrl = buyUrl)
   }
 
   static fromAdapter(dto: SolutionDTO) {
@@ -37,7 +40,8 @@ class Solution {
       dto.arrivalTime,
       trains,
       dto.price,
-      dto.saleable ?? false
+      dto.saleable ?? false,
+      dto.buyUrl
     )
   }
 
